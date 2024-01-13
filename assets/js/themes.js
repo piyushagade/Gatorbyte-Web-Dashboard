@@ -43,16 +43,16 @@ window.globals.apps["themes"] = function () {
 
                         rangeSelector: {
                             buttonTheme: {
-                                fill: '#505050',
+                                fill: '#555555',
                                 stroke: '#505050',
                                 style: {
-                                    color: '#CCCCCC' // Button text color
+                                    color: '#CCCCCC',
                                 },
                                 r: 10,
                                 states: {
                                     select: {
-                                        fill: '#cd8989',
-                                        stroke: '#cd8989',
+                                        fill: '#dcdede',
+                                        stroke: '#dcdede',
                                         style: {
                                             color: '#333333'
                                         }
@@ -63,6 +63,13 @@ window.globals.apps["themes"] = function () {
                                         style: {
                                             color: '#FFFFFF'
                                         }
+                                    },
+                                    disabled: {
+                                        fill: '#222222',
+                                        stroke: '#222222',
+                                        style: {
+                                            color: '#444444'
+                                        } 
                                     }
                                     
                                 }
@@ -147,6 +154,7 @@ window.globals.apps["themes"] = function () {
                                 "states": {
                                     "select": {
                                         "fill": "#c92e2e",
+                                        "stroke": '#c92e2e',
                                         "style": {
                                             "color": "white"
                                         }
@@ -157,6 +165,13 @@ window.globals.apps["themes"] = function () {
                                         "style": {
                                             "color": '#444444'
                                         }
+                                    },
+                                    disabled: {
+                                        fill: '#EFEFEF',
+                                        stroke: '#EFEFEF',
+                                        style: {
+                                            color: '#BBBBBB'
+                                        } 
                                     }
                                 }
                             },
