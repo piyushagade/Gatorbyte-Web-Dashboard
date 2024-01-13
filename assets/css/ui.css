@@ -1,0 +1,514 @@
+/* fonts.googleapis.com/css2?family=Open+Sans:wght@300'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@200;300'); */
+@import url('https://fonts.googleapis.com/css2?family=Questrial');
+/* @import url('https://fonts.googleapis.com/css2?family=Exo:wght@300;400'); */
+
+*{
+  font-family: 'Questrial';
+  font-weight: 500;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.greyed {
+  opacity: 0.4;
+}
+
+.disabled {
+  pointer-events: none;
+}
+
+.truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+p {
+  margin: 0px;
+  font-weight: 300;
+}
+ 
+.shadow {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.22), 0 1px 2px rgba(0,0,0,0.34);
+}
+ 
+.shadow-light {
+  box-shadow: 0 1px 13px rgba(0,0,0,0.02), 0 1px 12px rgba(0,0,0,0.03);
+}
+
+.shadow-heavy {
+  box-shadow: 0 10px 22px rgba(0,0,0,0.20), 0 10px 10px rgba(0,0,0,0.24);
+}
+
+.crop-circle {
+  background-size:cover; 
+  background-position:center; 
+  border-radius:50%; 
+}
+
+.clear {
+  clear: both; 
+}
+
+.horizontal-center {
+  display: block; 
+  margin: auto auto;
+}
+
+.absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+
+trs { border: 1px solid red; } 
+tgs { border: 1px solid green; }
+tbs { border: 1px solid blue; }
+trd { border: 1px dashed red; }
+tgd { border: 1px dashed green; }
+tbs { border: 1px dashed blue; }
+
+
+.scrollbar-style::-webkit-scrollbar {
+  background-color: transparent;
+  width: 6px;
+}
+
+.scrollbar-style-hidden::-webkit-scrollbar {
+  background-color: transparent;
+  width: 0px !important;
+  height: 0px !important;
+}
+
+/* background of the scrollbar except button or resizer */
+.scrollbar-style::-webkit-scrollbar-track {
+  background-color: transparent;
+  width: 0 !important;
+}
+.scrollbar-style::-webkit-scrollbar-track:hover {
+  background-color: transparent;
+  width: 0 !important;
+}
+
+/* scrollbar itself */
+.scrollbar-style::-webkit-scrollbar-thumb {
+  background-color:#a0a0a5;
+  border-radius:16px;
+  border:5px solid transparent
+}
+.scrollbar-style::-webkit-scrollbar-thumb:hover {
+  background-color:#329E59;
+  border:2px solid transparent
+}
+
+/* set button(top and bottom of the scrollbar) */
+.scrollbar-style::-webkit-scrollbar-button {display:none}
+
+.pointer {
+  cursor: pointer;
+}
+
+.ui-disabled {
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.ui-card-light {
+    background: rgba(240,240,240,0.88);
+    transition: all 0.4s ease-in-out;
+}
+
+.ui-card-dark {
+    background: rgba(80,80,80,0.7);
+}
+
+.ui-transition {
+    transition: all 0.4s ease-in-out;
+}
+
+.ui-card-orange {
+    background: rgba(250, 70, 22,0.7);
+}
+
+.ui-card-blue {
+    background: rgba(5, 89, 216, 0.88);
+}
+
+.ui-card {
+    padding: 20px 24px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.ui-card.no-shadow {
+    box-shadow: none;
+}
+
+.ui-row {
+    margin-bottom: 30px;
+}
+
+.ui-schedule-cell {
+    padding: 2px 4px;
+    border: 1px solid #AAA;
+    border-top: 5px solid #AAA;
+    border-left: 1px solid #AAA;
+    border-right: 1px solid #AAA;
+    border-bottom: 1px solid #AAA;
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-bottom: 16px;
+    opacity: 0.88;
+    min-width: 85px;;
+    max-width: 85px;;
+}
+
+.ui-schedule-cell.today {
+    opacity: 1;
+    transform: scale(1.1, 1.1);
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+    border-bottom: 1px solid #999;
+    box-shadow: 0 6px 8px rgba(0,0,0,0.12), 0 6px 8px rgba(0,0,0,0.14);
+}
+
+.ui-schedule-cell.boxing {
+    border-top: 5px solid rgba(250, 70, 22, 1);
+    background: rgba(250, 70, 22,0.04);
+}
+
+.ui-schedule-cell.kickboxing {
+    border-top: 5px solid rgba(46, 106, 218, 1);
+    background: rgba(46, 106, 218, 0.0.8);
+}
+
+.ui-schedule-cell.sparring {
+    border-top: 5px solid rgb(25, 94, 4);
+    background: rgba(155, 224, 25, 0.04);
+}
+
+.ui-schedule-cell.conditioning {
+    border-top: 5px solid rgb(159, 3, 115);
+    background: rgba(155, 224, 25, 0.04);
+}
+
+.ui-circle {
+    width: 10px;
+    height: 10px;
+    line-height: 8px;
+    border-radius: 0; /* the magic */
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    text-align: center;
+    padding-left: 10px;
+    margin-right: 2px;
+    font-size: 8px;
+    margin: -2px auto 0px;
+}
+
+
+.ui-btn-1 {
+    padding: 4px 12px;
+    background: rgb(28, 62, 126);
+    color: #FFF;
+    outline: 0 !important;
+    border: 0;
+    margin: 8px;
+    display: inline-block;
+}
+.ui-btn-1.green {
+    background: #329E59;
+}
+
+.ui-btn-2 {
+    padding: 8px 18px;
+    background: #329E59;
+    color: #FFF;
+    outline: 0 !important;
+    border: 0;
+    margin: 10px 5px;
+    width: 100%;
+    font-size: 20px;
+    display: inline-block;
+}
+
+.ui-input-dark {
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent;
+    border-radius: 0;
+    margin: 4px 6px;
+
+    font-size: 16px;
+    width: -webkit-fill-available;
+    padding: 2px 5px;
+    font-weight: 400;
+    border-bottom: 2px solid #bbbbbb !important; 
+    color: #222;
+}
+
+.ui-input-dark:active, .ui-input-dark:hover {
+    outline: 0 !important; 
+    border: 0 !important;
+    border-bottom: 2px solid #777777 !important;
+}
+
+.shadow {
+    box-shadow: 0 10px 22px rgba(0,0,0,0.20), 0 10px 10px rgba(0,0,0,0.24);
+}
+
+.shadow-medium {
+    box-shadow: 0 1rem 3rem rgb(0 0 0 / 72%) !important;
+}
+
+.shadow-heavy {
+    box-shadow: 0 2.5rem 8rem rgba(0,0,0,1) !important;
+}
+
+.shadow-super-heavy {
+    box-shadow: 0rem 0.5rem 108rem 11rem rgb(0, 0, 0, 0.75) !important
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.blog-modal a, .blog-preview-content a{
+    color: #63ADE5;
+}
+.blog-modal a:hover, .blog-preview-content a:hover{
+    color: #63ADE5;
+    text-decoration: none;
+}
+
+.blog-content, .blog-preview-content {
+    color: #BBB;
+    font-weight: 400;
+}
+
+.blog-content p, .blog-preview-content p {
+    color: #BBB;
+    font-weight: 400;
+    margin-bottom: 0px;
+}
+
+.blog-content .ql-align-right, .blog-preview-content .ql-align-right {
+    text-align: right;
+}
+
+.blog-content .ql-align-left, .blog-preview-content .ql-align-left {
+    text-align: left;
+}
+
+.blog-content .ql-align-center, .blog-preview-content .ql-align-center {
+    text-align: center;
+}
+
+.blog-content div, .blog-preview-content div {
+    margin: 10px 0px;
+}
+
+.blog-content hr, .blog-preview-content hr {
+    border: 0.5px solid #444;
+    margin: 18px 5px;
+}
+
+.blog-content h1,h2,h3,h4,h5,h6, .blog-preview-content h1,h2,h3,h4,h5,h6 {
+    color: #F6840D;
+    margin: 10px 0px 4px 0px;
+}
+
+.ui-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gallery-item-row {
+    transition: all 0.1s ease-out;
+    cursor: pointer;
+}
+
+.gallery-item-row:hover {
+    transform: scale(1.04, 1.04);
+}
+
+.gallery-lightbox-item-row {
+    transition: all 0.1s ease-out;
+    cursor: pointer;
+}
+
+.gallery-lightbox-item-row:hover {
+    transform: scale(1.06, 1.06);
+}
+/* 
+.gradient-button-fill {
+    position: absolute;
+    background-image: linear-gradient(to right, #E040FB, #00BCD4);
+    height: 100%;
+    width: 100%;
+    border-radius: 5px;
+    margin: -40px 0 0 -140px;
+    z-index: -1;
+    transition: all 0.4s ease;
+} */
+
+.donate-button-container {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    z-index: 10000;
+}
+
+.donate-button {
+    background: linear-gradient(to right, #E040FB, #00BCD4); 
+    outline: 0;
+    border: 0;
+    border-radius: 20px;
+    color: #EEE;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    transition: 0.8s all ease-in-out;
+    padding: 6px 16px;
+
+    cursor: pointer;
+	animation: gradient 5s ease infinite;
+}
+
+.donate-button:active {
+    outline: 0;
+}
+
+.sand-timer {
+	animation: sand-timer-rotate 5s ease infinite;
+}
+
+.alert-bell {
+	animation: alert-bell-scale 3s ease infinite;
+}
+
+.ql-snow.ql-toolbar button, .ql-snow .ql-toolbar button {
+    margin: 4px 2px;
+    background: #44444400;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+    transition: all 0.3s ease-in-out;
+}
+
+.ql-snow .ql-picker.ql-size {
+    border: 1px solid #444444AA !important;
+    margin-top: 2px;
+    margin-right: 10px;
+    height: 30px;
+}
+
+.ql-snow .ql-picker.ql-header {
+    border: 1px solid #444444AA !important;
+    margin-top: 2px;
+    margin-right: 10px;
+    height: 30px;
+}
+
+.ui-blur-light {
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -o-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
+}
+
+.ui-blur-heavy {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+}
+
+.marquee {
+    overflow: hidden;
+    position: relative;
+}
+  
+.marquee div {
+    display: block;
+    width: 200%;
+  
+    position: absolute;
+    overflow: hidden;
+    right: 0;
+  
+    animation: marquee 5s linear infinite;
+}
+  
+.marquee span {
+    float: left;
+    width: 50%;
+}
+  
+
+
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #333;
+    color: #fff;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    padding: 10px;
+    border-bottom: 1px solid #555;
+}
+
+
+@media screen and (max-width: 600px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 0;
+        overflow: hidden;
+    }
+
+    .content {
+        width: 100%;
+    }
+}
+
+.toggle-btn {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.menu {
+    display: none;
+    position: absolute;
+    top: 30px;
+    left: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    z-index: 1;
+}

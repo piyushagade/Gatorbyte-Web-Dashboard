@@ -1,0 +1,67 @@
+/*! Regular scrollbar */
+.scrollbar-style::-webkit-scrollbar {
+    background-color: transparent;
+    width: 6px;
+}
+
+/* background of the scrollbar except button or resizer */
+.scrollbar-style::-webkit-scrollbar-track {
+    background-color: transparent;
+    width: 0 !important;
+}
+.scrollbar-style::-webkit-scrollbar-track:hover {
+    background-color: transparent;
+    width: 0 !important;
+}
+
+/* scrollbar itself */
+.scrollbar-style::-webkit-scrollbar-thumb {
+    background-color:#727272;
+    border-radius:16px;
+    border:5px solid transparent
+}
+.scrollbar-style::-webkit-scrollbar-thumb:hover {
+    background-color:#329E59;
+    border:2px solid transparent
+}
+
+/* set button(top and bottom of the scrollbar) */
+.scrollbar-style::-webkit-scrollbar-button {display:none}
+
+/*! Hidden scrollbar */
+.scrollbar-style-hidden::-webkit-scrollbar {
+    background-color: transparent;
+    width: 0px !important;
+    height: 0px !important;
+}
+
+/*! Horizontal scrollbar */
+.scrollbar-style-horizontal::-webkit-scrollbar {
+    background-color: transparent;
+    width: 6px;
+    height: 4px;
+}
+
+/* background of the scrollbar except button or resizer */
+.scrollbar-style-horizontal::-webkit-scrollbar-track {
+    background-color: transparent;
+    width: 0 !important;
+}
+.scrollbar-style-horizontal::-webkit-scrollbar-track:hover {
+    background-color: transparent;
+    width: 0 !important;
+}
+
+/* scrollbar itself */
+.scrollbar-style-horizontal::-webkit-scrollbar-thumb {
+    background-color:#7272729a;
+    border-radius:16px;
+    border:5px solid transparent
+}
+.scrollbar-style-horizontal::-webkit-scrollbar-thumb:hover {
+    background-color:#329E59;
+    border:2px solid transparent
+}
+
+/* set button(top and bottom of the scrollbar) */
+.scrollbar-style-horizontal::-webkit-scrollbar-button {display:none}

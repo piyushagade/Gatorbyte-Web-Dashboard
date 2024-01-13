@@ -1,0 +1,36 @@
+
+.marker-black-hollow {
+    border-radius: 50%;
+    border: 3px solid rgba(20, 20, 20, 0.6);
+    pointer-events: none;
+}
+
+.marker-black-solid {
+    border-radius: 50%;
+    border: 6px solid rgba(20, 20, 20, 0.6);
+    pointer-events: none;
+}
+
+.marker-red-hollow {
+    border-radius: 50%;
+    border: 3px solid rgba(248, 112, 112, 1);
+    pointer-events: none;
+}
+
+.marker-red-solid {
+    border-radius: 50%;
+    border: 6px solid rgba(248, 112, 112, 1);
+    pointer-events: none;
+}
+
+.marker-blue-hollow {
+    border-radius: 50%;
+    border: 3px solid rgb(62, 48, 255);
+    pointer-events: none;
+}
+
+.marker-blue-solid {
+    border-radius: 50%;
+    border: 6px solid rgb(62, 48, 255);
+    pointer-events: none;
+}

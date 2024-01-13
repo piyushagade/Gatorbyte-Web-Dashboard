@@ -1,0 +1,458 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <link rel="stylesheet" href="./assets/css/main.css">
+        <link rel="stylesheet" href="./assets/css/map.css">
+        <link rel="stylesheet" href="./assets/css/ui.css">
+        <link rel="stylesheet" href="./assets/css/scrollbar.css">
+
+        <!-- Jquery -->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
+
+        <!-- Bootstrap -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"/>
+        
+        <!-- Highcharts -->
+        <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.3.2/highstock.min.js'></script>
+        <script src="https://code.highcharts.com/highcharts-more.js"></script> -->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.2.0/highstock.min.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.2.0/highcharts-more.min.js"></script>
+        
+        <!-- Mousetrap -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js"></script>
+        
+        <!-- Screenlog -->
+        <script src="./assets/js/lib/screenlog.js"></script>
+        <script src="./assets/js/lib/keys.js"></script>
+        <script src="./assets/js/lib/activity.js"></script>
+        
+        <!-- Moment.js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+        
+        <!-- PapaParse -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.0.0-beta.0/papaparse.min.js"></script>
+        
+        <!-- Noty -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.js"></script>
+        <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css"/>
+
+        <!-- Themes -->
+        <link rel='stylesheet' href="./assets/css/themes/light.css"/>
+        <link rel='stylesheet' href="./assets/css/themes/dark.css"/>
+
+        <!-- Loading page -->
+        <link rel='stylesheet' href="./assets/css/loading.css"/>
+
+        <!-- Animate.css -->
+        <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"/>
+
+        <!-- Fontawesome -->
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'/>
+
+        <!-- Superplaceholder -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/superplaceholder/1.0.0/superplaceholder.min.js"></script>
+
+        <!-- AES -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js'></script>
+        
+        <!-- Socket IO -->
+        <script src="https://sapi.ezbean-lab.com/socket.io/socket.io.js"></script>
+
+        <!-- Savitzky-Golay filter -->
+        <script src="https://unpkg.com/ml-savitzky-golay"></script>
+
+        <!-- Base64 -->
+        <script src="https://cdn.jsdelivr.net/npm/js-base64@2.5.2/base64.min.js"></script>
+        
+        <!-- Leaflet -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css'/>
+        <script src='./assets/js/leaflet.hotline.js'></script>
+
+        <!-- Codemirror -->
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css' crossorigin='anonymous'/>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js' crossorigin='anonymous'></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js' crossorigin='anonymous'></script>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/foldgutter.css' crossorigin='anonymous'/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/lint/lint.min.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/fold/foldcode.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/fold/foldgutter.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/fold/brace-fold.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/lint/json-lint.min.js"></script>
+
+        <!-- Multiline -->
+        <script type="text/javascript" src="./assets/js/lib/multiline.js"></script>
+
+        <title>UF - GatorByte</title>
+
+
+    </head>
+    <body style="overflow-y: hidden;">
+
+        <!--! Loading UI -->
+        <div class="loading-ui" style="padding: 26px 40px;position: relative; overflow-y: hidden; height: 100vh; display: flex; justify-content: center; align-items: center;">
+            
+            <!-- Logo -->
+            <div class="" style="max-width: 300px;">
+                <div class="logo-image-parent">
+                    <img src="./assets/images/logo.png" style="max-width: 300px;">
+                </div>
+            </div>
+        </div>
+
+        <!--! Dashboard UI -->
+        <div class="hidden container-fluid scrollbar-style dashboard-parent-ui scrollbar-style" style="padding: 26px 40px; position: relative; overflow-y: auto; overflow-x: hidden; height: 100vh;">
+
+            <div class="row">
+    
+                <main role="main" class="col-md-12 col-lg-12">
+                    
+                    <!-- Header -->
+                    <div class="header-menu-row header-menu shadow-light" style="margin-bottom: 10px; position: relative; margin: 0px -15px 12px; padding: 10px 6px 10px 6px; width: -webkit-fill-available;">
+                        
+                        <div class="scrollbar-style-hidden" style="display: inline-flex; overflow-x: auto; overflow-y: hidden; width: 100%;">
+                            
+                            <!-- App title -->
+                            <div class="header-menu-item" style="padding: 4px 12px;">
+                                <!-- <div style="margin-bottom: 6px; color: #AAA; font-size: 14px;">Project</div>
+                                <h3 style="color: #555; margin-bottom: 0;">GatorByte</h3> -->
+                                <img src="./assets/images/logo.png" style="max-width: 59px;transform: scale(1.3);">
+                            </div>
+
+                            <!-- Member UI -->
+                            <div class="member-info-div header-menu-item hidden" style="padding: 4px 8px 0px 12px; border-right: 0px;">
+                                <div style="margin-bottom: 0px; color: #AAA; font-size: 14px;">    
+                                    <p class="ui-truncate" style="font-size: 22px; color: #888; margin: -6px 2px -8px 2px; font-weight: 100;">Welcome, <span class="user-name-text" style="font-weight: 100;"></span></p>
+                                    <p class="ui-truncate" style="font-size: 15px;color: #888;margin: 6px 2px 2px 2px; font-weight: 100;"><span class="user-email-text" style="color: #909090; font-weight: 100;"></span></p>
+                                    <p class="ui-truncate" style="font-size: 14px;color: #888;margin: -2px 2px 2px 2px; font-weight: 100;"><span class="user-position-text" style="color: #707070; font-weight: 100;"></span>, <span class="user-role-text" style="color: #707070; font-weight: 100;"></span></p>
+                                </div> 
+                            </div>
+
+                            <!-- Device selector -->
+                            <div class="header-menu-item hidden" style="padding: 4px 8px 0px 8px;">
+                                <div style="margin-bottom: 6px; color: #AAA; font-size: 14px;">Site:</div>
+                                <select id="device-selector" class="dropdown-input-item" style="height: 30px; max-width: 230px; border: 0; border-bottom: 1px solid #BBB; background: transparent;">
+                                    <option value="" selected></option>
+                                </select>
+                            </div>
+
+                            <!-- Anomaly count -->
+                            <div class="header-menu-item hidden" style="padding: 4px 8px 0px 8px;">
+                                <div style="margin-bottom: 6px; color: #AAA; font-size: 14px;">Anomaly count:</div> 
+                                <span class="anomaly-count-display">0</span> (24 hrs)
+                            </div>
+                            
+                            <!-- Timezone -->
+                            <div class="header-menu-item hidden" style="padding: 4px 8px 0px 8px;">
+                                <div style="margin-bottom: 6px; color: #AAA; font-size: 14px;">Timezone:</div> 
+                                <input id="timezone-hr-shift-text-box" class="text-input-item" style="width:26px; background: transparent; border: 0; text-align: right; border-bottom: 1px solid #BBB;" placeholder="hrs">
+                                :
+                                <input id="timezone-min-shift-text-box" class="text-input-item" style="width:26px; background: transparent; border: 0; text-align: left; border-bottom: 1px solid #BBB;" placeholder="min">
+                                hrs.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings buttons -->
+                    <div class="row settings-menu-row" style="position: relative;">
+                        
+                        <!-- Theme -->
+                        <div class="col-auto theme-select-button settings-menu-item shadow-light" style="min-width: 32px; padding: 8px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-moon"></i>
+                        </div>
+                        
+                        <!-- Devices -->
+                        <div id="devicesBtn" class="col-auto project-device-selector-button settings-menu-item shadow-light" style="padding: 4px 10px; cursor: pointer; border-radius: 16px; width: auto;margin-right: 8px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-sitemap" style="margin-right: 4px;"></i>
+                            <span class="selected-device-name" style="font-size: 13px;">No device selected</span>
+                        </div>
+                        <div class="device-menu project-device-selector-menu menu shadow-heavy container" style="max-width: 400px;width: 86vw;margin-top: 12px;border-radius: 16px;display: none;">
+                            <div class="row">
+                                <div class="col-4" style=" border-right: 2px solid #ffffff29; padding-right: 8px;">
+                                    <p style="margin-bottom: 8px; font-size: 16px;">Projects</p>
+                                    <div class="projects-list" style="overflow-y: auto; max-height: 300px;"></div>
+                                </div>
+                                <div class="col">
+                                    <p style="margin-bottom: 8px; font-size: 16px;">Devices</p>
+                                    <div class="devices-list row scrollbar-style" style="margin: 0; overflow-y: auto; max-height: 300px; display: inline-flex;width: 100%;overflow-x: auto;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Site configuration -->
+                        <div class="col-auto show-hide-config-button settings-menu-item shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-screwdriver-wrench" style=" font-size: 13px; margin-right: 4px;"></i>
+                            <span class="text" style="font-size: 13px;">Configure</span>
+                        </div>
+                        
+                        <!-- Add a project -->
+                        <div class="col-auto add-project-button settings-menu-item shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-plus" style=" font-size: 13px; margin-right: 4px;"></i>
+                            <span class="text" style="font-size: 13px;">Add project</span>
+                        </div>
+                        
+                        <!-- Add a device -->
+                        <div class="col-auto add-device-button settings-menu-item shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-microchip" style=" font-size: 13px; margin-right: 4px;"></i>
+                            <span class="text" style="font-size: 13px;">Add device</span>
+                        </div>
+                        
+                        <!-- Logout -->
+                        <div class="col-auto logout-button settings-menu-item shadow-light" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-user" style=" font-size: 13px; margin-right: 4px;"></i>
+                            <span class="text" style="font-size: 13px;">Logout</span>
+                        </div>
+                    </div>
+
+                    <!-- <hr style="margin: 0 -14px 16px -14px;"> -->
+
+                    <div class="notification-parent-ui">
+
+                        <!-- Login notification -->
+                        <div class="row">
+                            <div id="login-notification" class="col-auto shadow hidden no-login-notification" style="background: #2a5661; color: #e0e0e0; margin-top: 16px;margin-bottom: 16px;padding: 12px 16px;border-radius: 17px;">
+                                Please login using your credentials to see the monitoring data.
+                            </div>
+                        </div>
+
+                        <!-- User inactivity -->
+                        <div class="row">
+                            <div id="user-inactive-notification" class="col-auto shadow hidden" style="background: rgb(248, 210, 38); color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
+                                You have been inactive for over 3 minutes. So, the chart updates have been paused.
+                            </div>
+                        </div>
+
+                        <!-- No response -->
+                        <div class="row">
+                            <div id="station-not-responding-notification" class="col-auto shadow hidden" style="background: rgb(248, 112, 112); color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
+                                The site/device has not been active since <span class="date-area">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Safe mode -->
+                        <div class="row">
+                            <div id="station-safe-mode-notification" class="col-auto shadow hidden" style="background: rgb(171, 112, 248); color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
+                                The device is in Safe Mode. Data collection is paused.
+                            </div>
+                        </div>
+
+                        <!-- No site selected -->
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="col-auto shadow hidden no-site-selected-notification" style="background: #0d426f; color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
+                                Please select a site using the <i class="fa-solid fa-sitemap" style="margin: 0 8px;"></i> button above.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-ui">
+
+                        <!-- Data summary fields -->
+                        <div class="data-summary-fields-list hidden" style="margin-bottom: 20px;">
+                            <div class="row">
+                                <div class="col-12 section-heading" style="font-size: 15px; padding: 0;">
+                                    Latest sensor readings <span style="color: #999; font-size: 12px;">(Last updated:</span> <span class="last-update-timestamp" style="color: #999; font-size: 12px;"></span><span style="color: #999; font-size: 12px;">)</span>
+                                </div>
+                            </div>
+                            <div class="row list"></div>
+                        </div>
+
+                        <!-- Data fields -->
+                        <div class="row data-fields-list-heading hidden">
+                            <div class="col-12 section-heading" style="font-size: 15px; padding: 0;">
+                                Data fields
+                            </div>
+                        </div>
+                        <div class="data-fields-list section-parent hidden" style="margin-bottom: 20px;">
+                            <div class="row highlights-list"></div>
+                            <div class="row non-highlights-list"></div>
+                        </div>
+
+                        <!-- Datatable -->
+                        <div class="row datatable-row-heading hidden">
+                            <div class="col-12 section-heading" style="font-size: 15px; padding: 0; margin-bottom: 4px">
+                                Data table
+                            </div>
+                        </div>
+                        <div class="row datatable-row section-parent hidden" style="margin-top: 0px;">
+                            <div class="col" style="padding: 0px 14px; min-height: 100px; border-top: 0; background: transparent;">
+                                <div class="tabs row" style="margin-top: 0px; color: #666; font-size: 14px;"></div>
+                                <div class="row-count-notification" style="display: none; width: max-content;color: white;padding: 5px 10px;font-size: 13px;background: rgb(137, 54, 61);margin-left: -12px;position: absolute;z-index: 1;top: 78px;right: 14px;border-radius: 2px;"></div>
+                                <div class="datatable table row shadow-light scrollbar-style scrollbar-style-horizontal" style="width: auto !important; font-size: 13px; min-height: 150px; max-height: 400px; overflow-y: auto; padding-left: 1px; padding-right: 1px; ">
+                                    <div class="col" style="margin: 0px; padding: 0;"></div>
+                                    <div class="hidden download-button shadow" style="position: absolute;left: 10px;background: #6335ebcc;backdrop-filter: blur(4px);width: auto;height: 28px;border-radius: 4px;bottom: 30px;margin: 0px;padding: 6px 12px;font-size: 14px;cursor: pointer;color: rgb(250, 250, 250);" title="Download table data">
+                                        <i class="fas fa-download" style="margin-right: 6px;"></i> Download
+                                    </div>
+                                    <div class="no-tab-selected-notification absolute-center" style="margin-top: 10px; font-size: 13px;">Select a tab</div>
+                                    <div class="no-data-notification absolute-center hidden" style="margin-top: 10px; font-size: 13px;">Select a tab above to show all data in a table format.</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Events -->
+                        <div class="row events-monitor-row-heading hidden">
+                            <div class="col-12 section-heading" style="font-size: 15px; padding: 0; margin-bottom: 4px;">
+                                Event log
+                            </div>
+                        </div>
+                        <div class="row events-monitor-row section-parent hidden" style="margin-bottom: 20px;">
+                            <div class="col events-monitor-list-parent shadow-light" style="padding: 0px; min-height: 100px;">
+                                <div class="list hidden scrollbar-style" style="margin-top: 2px;min-height: 100px;max-height: 200px;overflow-y: auto;padding-left: 1px;padding-right: 8px;color: #666;font-size: 14px;margin-right: 6px;"></div>
+                                <div class="empty-notification absolute-center" style="color: #999; font-size: 13px;">No events yet</div>
+                            </div>
+                        </div>
+                        
+                        <!-- State variables -->
+                        <div class="row state-data-row-heading hidden">
+                            <div class="col-12 section-heading" style="font-size: 15px; padding: 0; margin-bottom: 4px;">
+                                State data <span style="color: #999; font-size: 12px;">(Last updated: </span><span class="last-update-timestamp" style="color: #999; font-size: 12px;"></span><span style="color: #999; font-size: 12px;">)</span>
+                            </div>
+                        </div>
+                        <div class="row state-data-row section-parent hidden shadow-light" style="margin-bottom: 20px;">
+                            <div class="col state-data-list-parent" style="padding: 0px; min-height: 60px;">
+
+                                <!-- List -->
+                                <div class="row list" style="margin: 0; min-height: inherit; padding: 4px;">
+                                    <div class="no-data-notification absolute-center hidden" style="font-size: 13px;">No state updates available.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Control variables -->
+                        <div class="row control-variables-row-heading hidden">
+                            <div class="col-12 section-heading" style="font-size: 15px; padding: 0; margin-bottom: 4px;">
+                                Control variables <span style="color: #999; font-size: 12px;">(Last updated: </span><span class="last-update-timestamp" style="color: #999; font-size: 12px;"></span><span style="color: #999; font-size: 12px;">)</span>
+                            </div>
+                        </div>
+                        <div class="row control-variables-row section-parent hidden shadow-light" style="margin-bottom: 20px;">
+                            <div class="col control-variables-list-parent" style="padding: 0px; min-height: 60px;">
+
+                                <!-- List -->
+                                <div class="row list" style="margin: 0; min-height: inherit; padding: 4px;">
+                                    <div class="no-data-notification absolute-center hidden" style="font-size: 13px;">No control variables found.</div>
+                                </div>
+
+                                <!-- Save -->
+                                <div class="row hidden" style="padding: 0px 8px 8px 8px; margin: 0;">
+                                    <div class="col-auto update-control-variables-button button blue ui-disabled shadow" style="cursor: pointer; padding: 6px 12px; margin: 2px 2px 4px;">
+                                        Update
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Notes -->
+                        <div class="row notes-row-heading hidden">
+                            <div class="col-12 section-heading" style="font-size: 15px; padding: 0; margin-bottom: 4px">
+                                Notes (Under development)
+                            </div>
+                        </div>
+                        <div class="row notes-row hidden section-parent shadow-light" style="margin-bottom: 20px;">
+                            <div class="col notes-text-box-parent" style="padding: 10px 14px 10px 14px;">
+                                <textarea class="notes-text-box" type="text" style="outline: 0; height: 200px; font-size: 16px; margin-top: 2px; width:100%; background: transparent; border: 0; text-align: left; border-bottom: 1px solid #BBB; padding-left: 6px; padding-right: 6px;" placeholder="Site notes"></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Console -->
+                        <div class="row console-row-heading hidden">
+                            <div class="col-12 section-heading" style="font-size: 15px; padding: 0; margin-bottom: 4px">
+                                Console
+                            </div>
+                        </div>
+                        <div class="row console-row hidden section-parent shadow-light" style="margin-bottom: 20px;">
+                            <div class="col console-input-parent" style="padding: 10px 14px 0 14px;">
+                                <form>
+                                    <input id="console-input-text-box" type="text" style="outline: 0; height: 30px; font-size: 16px; margin-top: 2px; width:100%; background: transparent; border: 0; text-align: left; border-bottom: 1px solid #BBB; padding-left: 6px; padding-right: 6px;" placeholder="Input command and press enter">
+                                    <button class="console-input-submit-button hidden" style="display: none;"></button> 
+                                </form>
+                                <div class="response hidden" style="font-size: 13px;width: fit-content; padding: 4px 8px; margin-bottom: 10px; border-radius: 12px;">
+                                    <p style="margin-bottom: 0;"> <span style="font-weight: bold;">Response:</span> <span class="text" style="font-weight: 400;"></span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Config button -->
+                        <div class="row control-buttons-listz section-parent hidden" style="margin-bottom: 20px;">
+                            
+                            <div class="calibration-button col-auto shadow" style="cursor: pointer;background: #bababa;border: 0px solid #EEE;color: #515151;padding: 6px 12px;margin-right: 10px;">
+                                Calibration
+                            </div>
+                        </div>
+
+                        <!-- User and site settings -->
+                        <div class="row hidden">
+                            <div class="col-12 section-heading" style="font-size: 15px; padding: 0; margin-bottom: 4px">User and Site options</div>
+                        </div>
+                        <div class="user-site-settings section-parent hidden" style="margin-bottom: 20px;">
+                            <div class="row">
+
+                                <div class="col-auto shadow-light button add-site-button visible-on-login" style="position: relative; cursor: pointer; padding: 0; margin: 10px 10px 5px 0px; border: 1px solid rgba(187, 187, 187, 0.5);">
+                                
+                                    <!-- Header row -->    
+                                    <div class="row" style="margin: 0; margin-top: 10px; margin-bottom: -4px;">
+                                        <div class="col">
+                                            <p style="margin-bottom: 0px;font-size: 12px;margin-top: -6px;color: rgb(248, 112, 112);">Add site</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Value row -->    
+                                    <div class="row" style="margin: 0 0 6px 0;">
+                                        <div class="col value" style="font-size: 26px; color: #555; text-align: center;">
+                                            <i class="fas fa-plus" style="margin-top: 10px;"></i>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+            
+        </div>
+
+        <!-- !Open html slidein modal -->
+        <div class="ui-container html-slidein-ui hidden" style="height: 100%;width: 100%;margin: 0;padding: 20px;background: #7896b552;backdrop-filter: blur(14px);top: 0;position: absolute; z-index: 100000;">
+            <div class="content" style="color: #FFFFFFbb; padding: 10px; width: 98%; min-height: 90%; position: absolute; bottom: -8px;">
+                <div class="html-placeholder shadow scrollbar-style" style="margin:auto; max-height: 96%;max-width: 96%;background: rgba(255, 255, 255, 0.882);border-radius: 0px;min-width: 150px;min-height: 100px;backdrop-filter: blur(3px);padding: 20px 36px;color: rgb(34, 34, 34);overflow: hidden auto;width: 90%;"></div>
+            </div>
+            
+            <!-- Control buttons -->
+            <div class="circle-button" style="transform: scale(0.8); cursor: pointer;position: absolute; top: 18px; right: 24px; display: inline-flex; border-radius: 40px;padding: 4px;">
+                <div class="modal-close-button" style="cursor: pointer; height: 49px; width: 49px;">
+                    <i class="fas fa-times" style="color: #212121;font-size: 37px;margin-top: 8px;margin-left: 12px; opacity: 0.4;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div style="position: absolute;top: 0;left: 0;right: 0;bottom: 0;background: #0000000a;pointer-events: none;"></div>
+
+        <script type="text/javascript" src="./assets/js/functions.js"></script>
+        <script type="text/javascript" src="./assets/js/storage.js"></script>
+        <script type="text/javascript" src="./assets/js/main.js"></script>
+
+        <script type="text/javascript" src="./assets/js/socket.js"></script>
+        <script type="text/javascript" src="./assets/js/state.js"></script>
+        <script type="text/javascript" src="./assets/js/control.js"></script>
+        <script type="text/javascript" src="./assets/js/log.js"></script>
+        <script type="text/javascript" src="./assets/js/notes.js"></script>
+        <script type="text/javascript" src="./assets/js/console.js"></script>
+        <script type="text/javascript" src="./assets/js/projects.js"></script>
+        <script type="text/javascript" src="./assets/js/sites.js"></script>
+        <script type="text/javascript" src="./assets/js/htmlpopup.js"></script>
+        <script type="text/javascript" src="./assets/js/htmlslidein.js"></script>
+        <script type="text/javascript" src="./assets/js/users.js"></script>
+        <script type="text/javascript" src="./assets/js/calibration.js"></script>
+
+        <script type="text/javascript" src="./assets/js/themes.js"></script>
+        <script type="text/javascript" src="./assets/js/map.js"></script>
+        <script type="text/javascript" src="./assets/js/readings.js"></script>
+        <script type="text/javascript" src="./assets/js/chart.js"></script>
+        <!-- <script type="text/javascript" src="./assets/js/quickview.js"></script> -->
+        <script type="text/javascript" src="./assets/js/datatable.js"></script>
+
+    </body>
+</html>
