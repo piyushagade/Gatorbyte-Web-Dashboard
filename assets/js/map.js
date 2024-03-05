@@ -13,7 +13,7 @@ window.globals.apps["maps"] = function () {
 
         if ($("#map-container").length > 0) {
             
-            if(!window.globals.variables["gpsmap"]) window.globals.variables["gpsmap"] = L.map("map-container", { attributionControl: false });
+            if(!window.globals.variables["gpsmap"]) window.globals.variables["gpsmap"] = L.map("map-container", { attributionControl: false, gestureHandling: true });
             self.map = window.globals.variables["gpsmap"];
             self.map.setView(new L.LatLng(29.5627032,-82.2923514), 11);
 

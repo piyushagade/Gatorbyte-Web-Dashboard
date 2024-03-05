@@ -119,6 +119,7 @@ window.globals.apps["sites"] = function () {
                 
                 $(".settings-menu-row").find(".add-user-button").removeClass("hidden");
                 $(".settings-menu-row").find(".add-project-button").removeClass("hidden");
+                $(".settings-menu-row").find(".manage-projects-button").removeClass("hidden");
                 $(".settings-menu-row").find(".add-device-button").removeClass("hidden");
             }
             else {
@@ -126,6 +127,7 @@ window.globals.apps["sites"] = function () {
 
                 $(".settings-menu-row").find(".add-user-button").addClass("hidden").off("click");
                 $(".settings-menu-row").find(".add-project-button").addClass("hidden").off("click");
+                $(".settings-menu-row").find(".manage-projects-button").addClass("hidden").off("click");
                 $(".settings-menu-row").find(".add-device-button").addClass("hidden").off("click");
             }
 

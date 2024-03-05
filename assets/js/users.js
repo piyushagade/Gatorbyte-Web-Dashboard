@@ -558,7 +558,7 @@ window.globals.apps["users"] = function () {
         $(".notification-parent-ui .no-login-notification").addClass("hidden");
         $(".settings-menu-row .logout-button").find(".text").text("Logout");
         $(".dashboard-ui").removeClass("hidden");
-        $(".project-device-selector-button, .show-hide-config-button, add-project-button, .add-user-button").removeClass("ui-disabled");
+        $(".project-device-selector-button, .show-hide-config-button, add-project-button, .manage-projects-button, .add-user-button").removeClass("ui-disabled");
         $(".header-menu-row .member-info-div").removeClass("hidden");
 
         $(".member-info-div").find(".user-name-text").text(data.NAME);
@@ -577,7 +577,7 @@ window.globals.apps["users"] = function () {
         $(".notification-parent-ui .no-site-selected-notification").addClass("hidden");
         $(".settings-menu-row .logout-button").find(".text").text("Login");
         $(".dashboard-ui").addClass("hidden");
-        $(".project-device-selector-button, .show-hide-config-button, add-project-button, .add-user-button").addClass("ui-disabled");
+        $(".project-device-selector-button, .show-hide-config-button, add-project-button, .manage-projects-button, .add-user-button").addClass("ui-disabled");
         
         $(".header-menu-row .member-info-div").removeClass("hidden");
         $(".member-info-div").find(".user-name-text").text("guest");

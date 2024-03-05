@@ -357,115 +357,13 @@ window.globals.apps["projects"] = function () {
     self.listeners = function () {
 
         // Add a project button listener
-        $(".add-project-button").click(function () {
-            popup().open({
-                html: multiline(function () {/* 
-                    <div class="row" data-step="form">
-                        <div class="col">
+        $(".add-project-button").off("click").click(function () {
+            self.show_add_projects_modal();
+        });
 
-                            <form action="javascript:void(0);" style="margin-bottom: 0;">
-                                <div class="row" style="margin: 0 4px;">
-
-                                    <!-- Name input -->
-                                    <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
-                                        <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">Project name</p> 
-                                        <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter the name of the project. You can enter the full name or an abbreviation. <span style="font-weight: bold;">Min. length is 3 while max. length is 15 characters.</span></p> 
-                                        <input placeholder="UWRE, Lake Roussou, et cetera" type="text" class="ui-input-dark project-name-input" style=""/>
-                                    </div>
-
-                                    <!-- ID input -->
-                                    <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
-                                        <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">Project ID</p> 
-                                        <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter an identifier for the project. Please replace spaces with a hyphen. <span style="font-weight: bold;">Min. length is 3 while max. length is 6 characters.</span></p> 
-                                        <input placeholder="uwre, irrec, sasbjep, et cetera" type="text" class="ui-input-dark project-id-input" style=""/>
-                                    </div>
-
-                                    <!-- Project PI input -->
-                                    <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
-                                        <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">PI</p> 
-                                        <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter the name of the project's Principal Investigator.</p> 
-                                        <input placeholder="Aberta Gator" type="text" class="ui-input-dark pi-name-input" style=""/>
-                                    </div>
-
-                                </div>
-                                <div class="row" style="margin: -2px; width: 100%;">
-                                    <div class="col-auto" style="padding: 0;">
-                                        <button type="submit" class="ui-btn-1 shadow add-button" style="margin: 10px 6px 6px 6px;background: #329E5E;border-radius: 2px;font-size: 13px;">Add</button>
-                                    </div>
-                                    <div class="col-auto" style="padding: 0;">
-                                        <button type="clear" class="ui-btn-1 shadow modal-close-button" style="margin: 10px 6px 6px 6px;background: #404040;border-radius: 2px;font-size: 13px;">Close</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="row hidden" data-step="success">
-                        <div class="col">
-
-                            <div style="font-size: 0.8rem;padding: 10px 18px;text-align: center;">
-                                <i class="far fa-check-circle" style="color: green;font-size: 49px;opacity: 0.78;"></i>
-                                <p style="font-size: 13px;margin-top: 8px;margin-bottom: 8px;">The site was successfully created.</p>
-                                <p style="font-size: 13px;margin-top: 8px;margin-bottom: 8px;">Now, you can add the site's configuration information by clicking the button below.</p>
-                            </div>
-
-                            <div class="row" style="margin: 0 4px; width: 100%;">
-                                <div class="col-auto" style="padding: 0;">
-                                    <button type="submit" class="ui-btn-1 shadow add-another-button" style="margin: 10px 6px 6px 6px;background: #329E5E;border-radius: 2px;font-size: 13px;">Add another</button>
-                                </div>
-                                <div class="col-auto" style="padding: 0;">
-                                    <button type="clear" class="ui-btn-1 shadow modal-close-button" style="margin: 10px 6px 6px 6px;background: #404040;border-radius: 2px;font-size: 13px;">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                */}),
-                title: "New project",
-                subtitle: "Use this to create a new project",
-                theme: "light",
-                on_load: function () {
-
-                },
-                listeners: function (ui) {
-                    $(ui).find(".add-another-button").off("click").click(function () {
-                        $(ui).find("[data-step='form']").removeClass("hidden");
-                        $(ui).find("[data-step='success']").addClass("hidden");
-                    });
-
-                    $(ui).find("[data-step='form']").find(".add-button").off("click").click(function () {
-                        console.log($(ui).find("[data-step='form']").find(".project-name-input"));
-                        var projectname = $(ui).find("[data-step='form']").find(".project-name-input").val().trim();
-                        var projectid = $(ui).find("[data-step='form']").find(".project-id-input").val().trim().replace(/\s/g, "-").toLowerCase();
-                        var piname = $(ui).find("[data-step='form']").find(".pi-name-input").val().trim();
-
-                        if (projectname.length < 3 || projectname.length > 15) {
-                            self.f.create_notification("error", "The project name should be between 3 and 15 characters.", "mint");
-                            return;
-                        }
-
-                        if (projectid.length < 3 || projectid.length > 6) {
-                            self.f.create_notification("error", "The project id should be between 3 and 6 characters.", "mint");
-                            return;
-                        }
-
-                        $.ajax({
-                            url: self.f.url({ path: "/projects/project/create" }), 
-                            method: 'POST',
-                            data: JSON.stringify({
-                                "project-name": projectname,
-                                "project-id": projectid,
-                                "pi-name": piname,
-                                "user-email": JSON.parse(self.ls.getItem("user/data")).EMAIL,
-                                "user-id": JSON.parse(self.ls.getItem("user/data")).UUID
-                            }),
-                            success: function(response) {
-                                $(ui).find("[data-step='form']").addClass("hidden");
-                                $(ui).find("[data-step='success']").removeClass("hidden");
-                            },
-                            error: function (request, textStatus, errorThrown) { }
-                        });
-                    });
-                }
-            });
+        // Manage projects button listener
+        $(".manage-projects-button").off("click").click(function () {
+            self.show_manage_projects_modal();
         });
 
         // Add a site button listener
@@ -554,7 +452,7 @@ window.globals.apps["projects"] = function () {
 
     self.show_locator = function () {
 
-        if(!window.globals.variables["gpsmap"]) window.globals.variables["gpslocatormap"] = L.map("locator-map-container", { attributionControl: false });
+        if(!window.globals.variables["gpsmap"]) window.globals.variables["gpslocatormap"] = L.map("locator-map-container", { attributionControl: false, gestureHandling: true });
             self.locatormap = window.globals.variables["gpslocatormap"];
             self.locatormap.setView(new L.LatLng(29.5627032,-82.2923514), 11);
 
@@ -568,6 +466,228 @@ window.globals.apps["projects"] = function () {
             setInterval(function () {
                 try { self.locatormap.invalidateSize(); } catch (e) {}
             }, 1000);
+    }
+
+    self.show_add_projects_modal = function (ui) {
+        popup().open({
+            html: multiline(function () {/* 
+                <div class="row" data-step="form">
+                    <div class="col">
+
+                        <form action="javascript:void(0);" style="margin-bottom: 0;">
+                            <div class="row" style="margin: 0 4px;">
+
+                                <!-- Name input -->
+                                <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
+                                    <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">Project name</p> 
+                                    <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter the name of the project. You can enter the full name or an abbreviation. <span style="font-weight: bold;">Min. length is 3 while max. length is 15 characters.</span></p> 
+                                    <input placeholder="UWRE, Lake Roussou, et cetera" type="text" class="ui-input-dark project-name-input" style=""/>
+                                </div>
+
+                                <!-- ID input -->
+                                <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
+                                    <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">Project ID</p> 
+                                    <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter an identifier for the project. Please replace spaces with a hyphen. <span style="font-weight: bold;">Min. length is 3 while max. length is 6 characters.</span></p> 
+                                    <input placeholder="uwre, irrec, sasbjep, et cetera" type="text" class="ui-input-dark project-id-input" style=""/>
+                                </div>
+
+                                <!-- Project PI input -->
+                                <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
+                                    <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">PI</p> 
+                                    <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter the name of the project's Principal Investigator.</p> 
+                                    <input placeholder="Aberta Gator" type="text" class="ui-input-dark pi-name-input" style=""/>
+                                </div>
+
+                            </div>
+                            <div class="row" style="margin: -2px; width: 100%;">
+                                <div class="col-auto" style="padding: 0;">
+                                    <button type="submit" class="ui-btn-1 shadow add-button" style="margin: 10px 6px 6px 6px;background: #329E5E;border-radius: 2px;font-size: 13px;">Add</button>
+                                </div>
+                                <div class="col-auto" style="padding: 0;">
+                                    <button type="clear" class="ui-btn-1 shadow modal-close-button" style="margin: 10px 6px 6px 6px;background: #404040;border-radius: 2px;font-size: 13px;">Close</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row hidden" data-step="success">
+                    <div class="col">
+
+                        <div style="font-size: 0.8rem;padding: 10px 18px;text-align: center;">
+                            <i class="far fa-check-circle" style="color: green;font-size: 49px;opacity: 0.78;"></i>
+                            <p style="font-size: 13px;margin-top: 8px;margin-bottom: 8px;">The site was successfully created.</p>
+                            <p style="font-size: 13px;margin-top: 8px;margin-bottom: 8px;">Now, you can add the site's configuration information by clicking the button below.</p>
+                        </div>
+
+                        <div class="row" style="margin: 0 4px; width: 100%;">
+                            <div class="col-auto" style="padding: 0;">
+                                <button type="submit" class="ui-btn-1 shadow add-another-button" style="margin: 10px 6px 6px 6px;background: #329E5E;border-radius: 2px;font-size: 13px;">Add another</button>
+                            </div>
+                            <div class="col-auto" style="padding: 0;">
+                                <button type="clear" class="ui-btn-1 shadow modal-close-button" style="margin: 10px 6px 6px 6px;background: #404040;border-radius: 2px;font-size: 13px;">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            */}),
+            title: "New project",
+            subtitle: "Use this to create a new project",
+            theme: "light",
+            on_load: function () {
+
+            },
+            listeners: function (ui) {
+                $(ui).find(".add-another-button").off("click").click(function () {
+                    $(ui).find("[data-step='form']").removeClass("hidden");
+                    $(ui).find("[data-step='success']").addClass("hidden");
+                });
+
+                $(ui).find("[data-step='form']").find(".add-button").off("click").click(function () {
+                    console.log($(ui).find("[data-step='form']").find(".project-name-input"));
+                    var projectname = $(ui).find("[data-step='form']").find(".project-name-input").val().trim();
+                    var projectid = $(ui).find("[data-step='form']").find(".project-id-input").val().trim().replace(/\s/g, "-").toLowerCase();
+                    var piname = $(ui).find("[data-step='form']").find(".pi-name-input").val().trim();
+
+                    if (projectname.length < 3 || projectname.length > 15) {
+                        self.f.create_notification("error", "The project name should be between 3 and 15 characters.", "mint");
+                        return;
+                    }
+
+                    if (projectid.length < 3 || projectid.length > 6) {
+                        self.f.create_notification("error", "The project id should be between 3 and 6 characters.", "mint");
+                        return;
+                    }
+
+                    $.ajax({
+                        url: self.f.url({ path: "/projects/project/create" }), 
+                        method: 'POST',
+                        data: JSON.stringify({
+                            "project-name": projectname,
+                            "project-id": projectid,
+                            "pi-name": piname,
+                            "user-email": JSON.parse(self.ls.getItem("user/data")).EMAIL,
+                            "user-id": JSON.parse(self.ls.getItem("user/data")).UUID
+                        }),
+                        success: function(response) {
+                            $(ui).find("[data-step='form']").addClass("hidden");
+                            $(ui).find("[data-step='success']").removeClass("hidden");
+                        },
+                        error: function (request, textStatus, errorThrown) { }
+                    });
+                });
+            }
+        });
+    }
+
+    self.show_manage_projects_modal = function (ui) {
+        popup().open({
+            html: multiline(function () {/* 
+                <div class="row" data-step="form">
+                    <div class="col">
+
+                        <form action="javascript:void(0);" style="margin-bottom: 0;">
+                            <div class="row" style="margin: 0 4px;">
+
+                                <!-- Name input -->
+                                <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
+                                    <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">Project name</p> 
+                                    <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter the name of the project. You can enter the full name or an abbreviation. <span style="font-weight: bold;">Min. length is 3 while max. length is 15 characters.</span></p> 
+                                    <input placeholder="UWRE, Lake Roussou, et cetera" type="text" class="ui-input-dark project-name-input" style=""/>
+                                </div>
+
+                                <!-- ID input -->
+                                <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
+                                    <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">Project ID</p> 
+                                    <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter an identifier for the project. Please replace spaces with a hyphen. <span style="font-weight: bold;">Min. length is 3 while max. length is 6 characters.</span></p> 
+                                    <input placeholder="uwre, irrec, sasbjep, et cetera" type="text" class="ui-input-dark project-id-input" style=""/>
+                                </div>
+
+                                <!-- Project PI input -->
+                                <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
+                                    <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">PI</p> 
+                                    <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter the name of the project's Principal Investigator.</p> 
+                                    <input placeholder="Aberta Gator" type="text" class="ui-input-dark pi-name-input" style=""/>
+                                </div>
+
+                            </div>
+                            <div class="row" style="margin: -2px; width: 100%;">
+                                <div class="col-auto" style="padding: 0;">
+                                    <button type="submit" class="ui-btn-1 shadow add-button" style="margin: 10px 6px 6px 6px;background: #329E5E;border-radius: 2px;font-size: 13px;">Add</button>
+                                </div>
+                                <div class="col-auto" style="padding: 0;">
+                                    <button type="clear" class="ui-btn-1 shadow modal-close-button" style="margin: 10px 6px 6px 6px;background: #404040;border-radius: 2px;font-size: 13px;">Close</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row hidden" data-step="success">
+                    <div class="col">
+
+                        <div style="font-size: 0.8rem;padding: 10px 18px;text-align: center;">
+                            <i class="far fa-check-circle" style="color: green;font-size: 49px;opacity: 0.78;"></i>
+                            <p style="font-size: 13px;margin-top: 8px;margin-bottom: 8px;">The site was successfully created.</p>
+                            <p style="font-size: 13px;margin-top: 8px;margin-bottom: 8px;">Now, you can add the site's configuration information by clicking the button below.</p>
+                        </div>
+
+                        <div class="row" style="margin: 0 4px; width: 100%;">
+                            <div class="col-auto" style="padding: 0;">
+                                <button type="submit" class="ui-btn-1 shadow add-another-button" style="margin: 10px 6px 6px 6px;background: #329E5E;border-radius: 2px;font-size: 13px;">Add another</button>
+                            </div>
+                            <div class="col-auto" style="padding: 0;">
+                                <button type="clear" class="ui-btn-1 shadow modal-close-button" style="margin: 10px 6px 6px 6px;background: #404040;border-radius: 2px;font-size: 13px;">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            */}),
+            title: "Manage projects",
+            subtitle: "Use this to manage GatorByte projects",
+            theme: "dark",
+            on_load: function () {
+
+            },
+            listeners: function (ui) {
+                $(ui).find(".add-another-button").off("click").click(function () {
+                    $(ui).find("[data-step='form']").removeClass("hidden");
+                    $(ui).find("[data-step='success']").addClass("hidden");
+                });
+
+                $(ui).find("[data-step='form']").find(".add-button").off("click").click(function () {
+                    console.log($(ui).find("[data-step='form']").find(".project-name-input"));
+                    var projectname = $(ui).find("[data-step='form']").find(".project-name-input").val().trim();
+                    var projectid = $(ui).find("[data-step='form']").find(".project-id-input").val().trim().replace(/\s/g, "-").toLowerCase();
+                    var piname = $(ui).find("[data-step='form']").find(".pi-name-input").val().trim();
+
+                    if (projectname.length < 3 || projectname.length > 15) {
+                        self.f.create_notification("error", "The project name should be between 3 and 15 characters.", "mint");
+                        return;
+                    }
+
+                    if (projectid.length < 3 || projectid.length > 6) {
+                        self.f.create_notification("error", "The project id should be between 3 and 6 characters.", "mint");
+                        return;
+                    }
+
+                    $.ajax({
+                        url: self.f.url({ path: "/projects/project/create" }), 
+                        method: 'POST',
+                        data: JSON.stringify({
+                            "project-name": projectname,
+                            "project-id": projectid,
+                            "pi-name": piname,
+                            "user-email": JSON.parse(self.ls.getItem("user/data")).EMAIL,
+                            "user-id": JSON.parse(self.ls.getItem("user/data")).UUID
+                        }),
+                        success: function(response) {
+                            $(ui).find("[data-step='form']").addClass("hidden");
+                            $(ui).find("[data-step='success']").removeClass("hidden");
+                        },
+                        error: function (request, textStatus, errorThrown) { }
+                    });
+                });
+            }
+        });
     }
 
 }
