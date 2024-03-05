@@ -118,7 +118,7 @@ window.globals.apps["socket"] = function () {
 
         var sender_id = self.id;
         var adapter_id = "gb-server";
-        var target_device_id = self.ls.getItem("state/device/sn"); // TODO: Include project id or device UUID
+        var target_device_id = self.ls.getItem("state/device/sn");
 
         var topic = sender_id + "::" + adapter_id + "::" + target_device_id + ":::" + args["action"];
         var message = typeof args["payload"] == "object" ? JSON.stringify(args["payload"]) : args["payload"];

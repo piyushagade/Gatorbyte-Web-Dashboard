@@ -32,19 +32,20 @@ window.globals.apps["sites"] = function () {
         });
     }
 
-    self.get_site_config_data = function(site_id, callback) {
-        if (!site_id) return;
+    self.get_site_config_data = function(callback) {
 
         $.ajax({
             url: self.f.url({ path: "/sites/site/get" }), 
             method: 'POST',
             data: JSON.stringify({
-                "site-id": site_id
+                "device-sn": self.ls.getItem("state/device/sn"),
+                "device-id": self.ls.getItem("state/device/id"),
+                "project-id": self.ls.getItem("state/project/id"),
             }),
-            success: function(site) {
+            success: function(response) {
 
                 // Set global data variable
-                window.globals.data["site"] = site;
+                window.globals.data["site"] = response.payload;
                 if (callback && typeof callback == "function") callback(window.globals.data["site"]);
 
             },
@@ -65,6 +66,8 @@ window.globals.apps["sites"] = function () {
 
         global.DEVICE_ID = self.ls.getItem("state/device/name");
         console.log("Site selected: " + global.DEVICE_ID);
+        console.log("Device SN: " + self.ls.getItem("state/device/sn"));
+
 
         // // Hide empty site option in dropdown
         // $("#device-selector").find('option[value=""]').remove();
@@ -104,7 +107,7 @@ window.globals.apps["sites"] = function () {
         window.globals.accessors["log"].get_log_history();
 
         // Get site's config data
-        self.get_site_config_data(self.ls.getItem("state/device/id"), function (site) {
+        self.get_site_config_data(function (site) {
 
             var allowedsites = window.globals.data["devices"];
             var devicerole = self.ls.getItem("state/device/role");
@@ -114,12 +117,14 @@ window.globals.apps["sites"] = function () {
             if (projectrole == "super" || projectrole == "admin") {
                 console.log("The user is an admin/super for the project.");
                 
+                $(".settings-menu-row").find(".add-user-button").removeClass("hidden");
                 $(".settings-menu-row").find(".add-project-button").removeClass("hidden");
                 $(".settings-menu-row").find(".add-device-button").removeClass("hidden");
             }
             else {
                 console.log("The user is NOT an admin/super for the project.");
 
+                $(".settings-menu-row").find(".add-user-button").addClass("hidden").off("click");
                 $(".settings-menu-row").find(".add-project-button").addClass("hidden").off("click");
                 $(".settings-menu-row").find(".add-device-button").addClass("hidden").off("click");
             }

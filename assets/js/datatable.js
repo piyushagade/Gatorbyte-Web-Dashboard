@@ -107,7 +107,7 @@ window.globals.apps["datatable"] = function () {
             // Next add other headers
             headers.forEach(function (header, hi) {
                 var df = self.f.grep(data_fields_in_the_group, "ID", header, true);
-                var units = df && (df.UNITS || df.CHART.UNITS);
+                var units = df && (df.UNITS || df.CHART && df.CHART.UNITS);
 
                 $(".datatable-row .table table tr.header-row").append(multiline(function () {/* 
                     <th style="font-size: 12px; text-align: center; font-weight: bold;">{{header}}</th>

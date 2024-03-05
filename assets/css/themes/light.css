@@ -1,5 +1,8 @@
 body.light {
     background: #e4e4e4;
+    background-image: radial-gradient(at top left, #f7f7f7, transparent), radial-gradient(at top right, #ffd4e4e0, transparent), radial-gradient(at bottom left, #A7D3F2, transparent); 
+    background-size: 100% 100%; 
+    background-repeat: no-repeat;
 }
 
 body.light .header-menu-row {
@@ -214,58 +217,58 @@ body.light .log-sentence.highlighted {
 }
 
 /* HTML popup */
-body.light .html-popup-ui:not(.light) .html-placeholder,
-body.light .html-popup-ui.light .html-placeholder {
-    background: #bbbbbb;
+body.light .html-popup-ui:not(.dark) .html-placeholder,
+body.dark .html-popup-ui.light .html-placeholder {
+    background: rgb(187, 187, 187);
     color: #222222;
 }
 
-body.light .html-popup-ui:not(.light) .html-placeholder .heading,
-body.light .html-popup-ui.light .html-placeholder .heading {
+body.light .html-popup-ui:not(.dark) .html-placeholder .heading,
+body.dark .html-popup-ui.light .html-placeholder .heading {
     background: #f6f6f6;
     color: #222222;
 }
-body.light .html-popup-ui:not(.light) .html-placeholder .heading .title,
-body.light .html-popup-ui.light .html-placeholder .heading .title {
+body.light .html-popup-ui:not(.dark) .html-placeholder .heading .title,
+body.dark .html-popup-ui.light .html-placeholder .heading .title {
     color: #222222;
 }
-body.light .html-popup-ui:not(.light) .html-placeholder .heading .subtitle,
-body.light .html-popup-ui.light .html-placeholder .heading .subtitle {
+body.light .html-popup-ui:not(.dark) .html-placeholder .heading .subtitle,
+body.dark .html-popup-ui.light .html-placeholder .heading .subtitle {
     color: #444444;
 }
 
-body.light .html-popup-ui:not(.light) .html-placeholder .tabs,
-body.light .html-popup-ui.light .html-placeholder .tabs {
+body.light .html-popup-ui:not(.dark) .html-placeholder .tabs,
+body.dark .html-popup-ui.light .html-placeholder .tabs {
     
 }
-body.light .html-popup-ui:not(.light) .html-placeholder .tabs .list,
-body.light .html-popup-ui.light .html-placeholder .tabs .list {
+body.light .html-popup-ui:not(.dark) .html-placeholder .tabs .list,
+body.dark .html-popup-ui.light .html-placeholder .tabs .list {
 
 }
-body.light .html-popup-ui:not(.light) .html-placeholder .tabs .list .tab-item,
-body.light .html-popup-ui.light .html-placeholder .tabs .list .tab-item {
+body.light .html-popup-ui:not(.dark) .html-placeholder .tabs .list .tab-item,
+body.dark .html-popup-ui.light .html-placeholder .tabs .list .tab-item {
     background: #DDDDDD;
     color: #222222;
 }
-body.light .html-popup-ui:not(.light) .html-placeholder .tabs .list .tab-item.active ,
-body.light .html-popup-ui.light .html-placeholder .tabs .list .tab-item.active {
+body.light .html-popup-ui:not(.dark) .html-placeholder .tabs .list .tab-item.active ,
+body.dark .html-popup-ui.light .html-placeholder .tabs .list .tab-item.active {
     background: #FFFFFF;
     color: #222222;
 }
 
-body.light .html-popup-ui:not(.light) .html-placeholder .body,
-body.light .html-popup-ui.light .html-placeholder .body {
+body.light .html-popup-ui:not(.dark) .html-placeholder .body,
+body.dark .html-popup-ui.light .html-placeholder .body {
     background: #f6f6f6;
     color: #222222;
 }
 
-body.light .html-popup-ui:not(.light) .html-placeholder .overlay-action-buttons,
-body.light .html-popup-ui.light .html-placeholder .overlay-action-buttons {
+body.light .html-popup-ui:not(.dark) .html-placeholder .overlay-action-buttons,
+body.dark .html-popup-ui.light .html-placeholder .overlay-action-buttons {
 
 }
 
-body.light .html-popup-ui:not(.light) .circle-button,
-body.light .html-popup-ui.light .circle-button {
+body.light .html-popup-ui:not(.dark) .circle-button,
+body.dark .html-popup-ui.light .circle-button {
     background: #4b4b4b66;
 }
 
@@ -291,6 +294,7 @@ body.light .settings-menu-item.logout-button {
 body.light .device-menu {
     z-index: 10000;
     background: #001f33e8;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     color: #d8d8d8;
 }
@@ -339,4 +343,8 @@ body.light .button.blue {
     background: #415a6e; 
     color: #EEE; 
     border-radius: 10px;
+}
+
+body.light .shadow-medium {
+    box-shadow: 0 1px 14px rgba(184, 184, 184, 0.2) !important;
 }

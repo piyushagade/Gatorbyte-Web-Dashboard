@@ -187,6 +187,8 @@ function functions_subapp(){
     }
     
     self.grep = function (data, key, value, return_first_result_only, search_fuzzy) {
+        if (!data) return null;
+        
         var res = $.grep(data, function (element, index) {
             if (element[key])
                 return (search_fuzzy == undefined ? false : search_fuzzy) ? element[key].toLowerCase().indexOf(value.toString().toLowerCase()) > -1 : element[key].toLowerCase() == value.toString().toLowerCase();

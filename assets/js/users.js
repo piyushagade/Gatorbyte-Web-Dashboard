@@ -5,6 +5,118 @@ window.globals.apps["users"] = function () {
 
     self.init = function (callback) {
 
+        
+        // Add a project button listener
+        $(".add-user-button").click(function () {
+            popup().open({
+                html: multiline(function () {/* 
+                    <div class="row" data-step="form">
+                        <div class="col">
+
+                            <form action="javascript:void(0);" style="margin-bottom: 0;">
+                                <div class="row" style="margin: 0 4px;">
+
+                                    <!-- Name input -->
+                                    <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
+                                        <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">Project name</p> 
+                                        <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter the name of the project. You can enter the full name or an abbreviation. <span style="font-weight: bold;">Min. length is 3 while max. length is 15 characters.</span></p> 
+                                        <input placeholder="UWRE, Lake Roussou, et cetera" type="text" class="ui-input-dark project-name-input" style=""/>
+                                    </div>
+
+                                    <!-- ID input -->
+                                    <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
+                                        <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">Project ID</p> 
+                                        <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter an identifier for the project. Please replace spaces with a hyphen. <span style="font-weight: bold;">Min. length is 3 while max. length is 6 characters.</span></p> 
+                                        <input placeholder="uwre, irrec, sasbjep, et cetera" type="text" class="ui-input-dark project-id-input" style=""/>
+                                    </div>
+
+                                    <!-- Project PI input -->
+                                    <div class="col-12" style="background: #22222222;border-radius: 2px;padding: 12px 10px; margin: 6px 0;">
+                                        <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">PI</p> 
+                                        <p style="font-size: 13px;color: #444;margin-bottom: 0;">Enter the name of the project's Principal Investigator.</p> 
+                                        <input placeholder="Aberta Gator" type="text" class="ui-input-dark pi-name-input" style=""/>
+                                    </div>
+
+                                </div>
+                                <div class="row" style="margin: -2px; width: 100%;">
+                                    <div class="col-auto" style="padding: 0;">
+                                        <button type="submit" class="ui-btn-1 shadow add-button" style="margin: 10px 6px 6px 6px;background: #329E5E;border-radius: 2px;font-size: 13px;">Add</button>
+                                    </div>
+                                    <div class="col-auto" style="padding: 0;">
+                                        <button type="clear" class="ui-btn-1 shadow modal-close-button" style="margin: 10px 6px 6px 6px;background: #404040;border-radius: 2px;font-size: 13px;">Close</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row hidden" data-step="success">
+                        <div class="col">
+
+                            <div style="font-size: 0.8rem;padding: 10px 18px;text-align: center;">
+                                <i class="far fa-check-circle" style="color: green;font-size: 49px;opacity: 0.78;"></i>
+                                <p style="font-size: 13px;margin-top: 8px;margin-bottom: 8px;">The site was successfully created.</p>
+                                <p style="font-size: 13px;margin-top: 8px;margin-bottom: 8px;">Now, you can add the site's configuration information by clicking the button below.</p>
+                            </div>
+
+                            <div class="row" style="margin: 0 4px; width: 100%;">
+                                <div class="col-auto" style="padding: 0;">
+                                    <button type="submit" class="ui-btn-1 shadow add-another-button" style="margin: 10px 6px 6px 6px;background: #329E5E;border-radius: 2px;font-size: 13px;">Add another</button>
+                                </div>
+                                <div class="col-auto" style="padding: 0;">
+                                    <button type="clear" class="ui-btn-1 shadow modal-close-button" style="margin: 10px 6px 6px 6px;background: #404040;border-radius: 2px;font-size: 13px;">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                */}),
+                title: "New user",
+                subtitle: "Use this to add a new user",
+                theme: "light",
+                on_load: function () {
+
+                },
+                listeners: function (ui) {
+                    $(ui).find(".add-another-button").off("click").click(function () {
+                        $(ui).find("[data-step='form']").removeClass("hidden");
+                        $(ui).find("[data-step='success']").addClass("hidden");
+                    });
+
+                    $(ui).find("[data-step='form']").find(".add-button").off("click").click(function () {
+                        var projectname = $(ui).find("[data-step='form']").find(".project-name-input").val().trim();
+                        var projectid = $(ui).find("[data-step='form']").find(".project-id-input").val().trim().replace(/\s/g, "-").toLowerCase();
+                        var piname = $(ui).find("[data-step='form']").find(".pi-name-input").val().trim();
+
+                        if (projectname.length < 3 || projectname.length < 15) {
+                            self.f.create_notification("error", "The project name should be between 3 and 15 characters.", "mint");
+                            return;
+                        }
+
+                        if (projectid.length < 3 || projectid.length < 6) {
+                            self.f.create_notification("error", "The project id should be between 3 and 6 characters.", "mint");
+                            return;
+                        }
+
+                        $.ajax({
+                            url: self.f.url({ path: "/projects/project/create" }), 
+                            method: 'POST',
+                            data: JSON.stringify({
+                                "project-name": projectname,
+                                "project-id": projectid,
+                                "pi-name": piname,
+                                "user-email": JSON.parse(self.ls.getItem("user/data")).EMAIL,
+                                "user-id": JSON.parse(self.ls.getItem("user/data")).UUID
+                            }),
+                            success: function(response) {
+                                $(ui).find("[data-step='form']").addClass("hidden");
+                                $(ui).find("[data-step='success']").removeClass("hidden");
+                            },
+                            error: function (request, textStatus, errorThrown) { }
+                        });
+                    });
+                }
+            });
+        });
+
         $(".show-hide-config-button").off("click").click(function () {
             
             var html = multiline(function () {/*
@@ -146,6 +258,8 @@ window.globals.apps["users"] = function () {
                 self.get_login_state();
 
                 $(this).find(".text").text("Login");
+                $(".requires-login").addClass("hidden");
+                $(".project-device-selector-button .selected-device-name").text("No device selected");
             }
             else {
                 self.open_login_dialog();
@@ -444,7 +558,7 @@ window.globals.apps["users"] = function () {
         $(".notification-parent-ui .no-login-notification").addClass("hidden");
         $(".settings-menu-row .logout-button").find(".text").text("Logout");
         $(".dashboard-ui").removeClass("hidden");
-        $(".project-device-selector-button, .show-hide-config-button, add-project-button").removeClass("ui-disabled");
+        $(".project-device-selector-button, .show-hide-config-button, add-project-button, .add-user-button").removeClass("ui-disabled");
         $(".header-menu-row .member-info-div").removeClass("hidden");
 
         $(".member-info-div").find(".user-name-text").text(data.NAME);
@@ -463,7 +577,7 @@ window.globals.apps["users"] = function () {
         $(".notification-parent-ui .no-site-selected-notification").addClass("hidden");
         $(".settings-menu-row .logout-button").find(".text").text("Login");
         $(".dashboard-ui").addClass("hidden");
-        $(".project-device-selector-button, .show-hide-config-button, add-project-button").addClass("ui-disabled");
+        $(".project-device-selector-button, .show-hide-config-button, add-project-button, .add-user-button").addClass("ui-disabled");
         
         $(".header-menu-row .member-info-div").removeClass("hidden");
         $(".member-info-div").find(".user-name-text").text("guest");

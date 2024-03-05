@@ -432,16 +432,17 @@ window.globals.apps["projects"] = function () {
                     });
 
                     $(ui).find("[data-step='form']").find(".add-button").off("click").click(function () {
+                        console.log($(ui).find("[data-step='form']").find(".project-name-input"));
                         var projectname = $(ui).find("[data-step='form']").find(".project-name-input").val().trim();
                         var projectid = $(ui).find("[data-step='form']").find(".project-id-input").val().trim().replace(/\s/g, "-").toLowerCase();
                         var piname = $(ui).find("[data-step='form']").find(".pi-name-input").val().trim();
 
-                        if (projectname.length < 3 || projectname.length < 15) {
+                        if (projectname.length < 3 || projectname.length > 15) {
                             self.f.create_notification("error", "The project name should be between 3 and 15 characters.", "mint");
                             return;
                         }
 
-                        if (projectid.length < 3 || projectid.length < 6) {
+                        if (projectid.length < 3 || projectid.length > 6) {
                             self.f.create_notification("error", "The project id should be between 3 and 6 characters.", "mint");
                             return;
                         }

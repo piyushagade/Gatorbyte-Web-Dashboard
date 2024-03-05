@@ -14,7 +14,7 @@ window.globals.apps["control"] = function () {
         $.ajax({
             type: 'POST',
             data: JSON.stringify({
-                "device-sn": self.ls.getItem("state/device/sn"),
+                "device-sn": self.ls.getItem("state/device/sn"), 
                 "device-id": self.ls.getItem("state/device/id"),
                 "project-id": self.ls.getItem("state/project/id"),
                 "timestamp": moment.now(),
@@ -47,9 +47,6 @@ window.globals.apps["control"] = function () {
             data = typeof data == "string" ? JSON.parse(data) : data;
             var keys = Object.keys(data);
 
-            // // Remove old items
-            // $(".control-variables-row").find(".control-variable-item").remove();
-
             if (keys.length > 0) {
                 
                 $(".control-variables-row .list .no-data-notification").addClass("hidden");
@@ -72,11 +69,9 @@ window.globals.apps["control"] = function () {
                         var variable = key;
                         var metadata = self.f.grep(window.globals.data["site"]["CONTROL"], "key", variable, true);
 
-                        if (!metadata) return;
-
-                        var name = metadata.name && metadata.name.length > 0 ? metadata.name : key;
-                        var value = metadata.format && metadata.format.formula.length > 0 ? eval(metadata.format.formula.replace("{{VALUE}}", data[key])) : data[key];
-                        var unit = metadata.format && metadata.format.unit.length > 0 ? metadata.format.unit : null;
+                        var name = metadata && metadata.name && metadata.name.length > 0 ? metadata.name : key;
+                        var value = metadata && metadata.format && metadata.format.formula.length > 0 ? eval(metadata.format.formula.replace("{{VALUE}}", data[key])) : data[key];
+                        var unit = metadata && metadata.format && metadata.format.unit.length > 0 ? metadata.format.unit : null;
 
                         if (isstring || isnumber) {
                             $(".control-variables-row .list").append(multiline (function () {/* 
@@ -141,8 +136,8 @@ window.globals.apps["control"] = function () {
                         }
                     }
                     
-                    // Set theme
-                    window.globals.accessors["themes"].settheme();
+                    // // Set theme
+                    // window.globals.accessors["themes"].settheme();
 
                     $(".control-variable-item input").off("keyup").keyup(function () {
                         self.updatepending = true;

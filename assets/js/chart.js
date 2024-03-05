@@ -46,7 +46,9 @@ window.globals.apps["charts"] = function () {
             var seriesdata = [{
                 name: series_name,
                 data: window.globals.data["data-fields-readings-formatted"][chart_name] || [],
-                yAxis: 0
+                yAxis: 0,
+                gapSize: 3600000, // 1 hour gap
+                gapUnit: "value"
             }];
 
             //! Add reference data if available
@@ -365,7 +367,9 @@ window.globals.apps["charts"] = function () {
             var seriesdata = [{
                 name: series_name,
                 data: data_array,
-                yAxis: 0
+                yAxis: 0,
+                gapSize: 3600000, // 1 hour gap
+                gapUnit: "value"
             }];
 
             //! Add reference data if available

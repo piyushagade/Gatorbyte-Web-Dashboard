@@ -200,8 +200,46 @@ $(document).ready(function () {
 
         $(".theme-select-button").attr("state", newstate);
         globals.variables.ls.setItem("/settings/theme", newstate);
-    })
+    });
 
+
+    $(".start-walkthrough-button").off("click").click(function () {
+        let steps = [];
+
+        var elements = [
+            { element: '.project-device-selector-button', popover: { title: 'Device selection', description: 'Click here to see all the projects and devices you have access to view.', side: "left", align: 'start' } },
+            { element: '.show-hide-config-button', popover: { title: 'Dashboard configuration', description: 'To change the dashboard configuration for the selected device, click here. You can change the way the charts are displayed, format the raw data, and more.', side: "bottom", align: 'start' } },
+            { element: '.theme-select-button', popover: { title: 'Change theme', description: 'Switch between the dark and light modes.', side: "bottom", align: 'start' } },
+            { element: '.logout-button', popover: { title: 'Dashboard access', description: 'Login or logout using this button.', side: "bottom", align: 'start' } },
+            { element: '.data-summary-fields-list', popover: { title: 'Summary list', description: 'This section shows the snapshot of the latest readings.', side: "bottom", align: 'start' } },
+            { element: '.data-fields-list .row', popover: { title: 'Data fields', description: 'Here lies the charts and the maps.', side: "bottom", align: 'start' } },
+            { element: '.datatable-row .datatable', popover: { title: 'Datatable', description: 'If you want to see or download the data in tabular form, this is where you need to be.', side: "bottom", align: 'start' } },
+            { element: '.datatable-row .tabs', popover: { title: 'Datatable tabs', description: 'The data is organized by tabs.', side: "bottom", align: 'start' } },
+            { element: '.events-monitor-row', popover: { title: 'Event log', description: 'If your GatorByte is configured to send log messages, this is where you will see them.', side: "bottom", align: 'start' } },
+            { element: '.state-data-row', popover: { title: 'Last known state', description: 'If your GatorByte is configured to send state data, you will see that information.', side: "bottom", align: 'start' } },
+            { element: '.control-variables-row', popover: { title: 'Control variables', description: 'You can see and update control variables on your GatorByte using this section.', side: "bottom", align: 'start' } },
+            { popover: { title: 'Thank you for using GatorByte!', description: 'And that is all, you can restart the tour by clicking on the ? icon.' } }
+        ];
+
+        elements.forEach(function (element, ei) {
+            if (!element.element) return;
+
+            if ($(element.element).hasClass("hidden") || $(element.elements).hasClass("disabled")) return;
+            if (element.element.indexOf(".data-fields-list") == 0 && $('.data-fields-list').hasClass("hidden")) return;
+            if (element.element.indexOf(".datatable-row") == 0 && $('.datatable-row').hasClass("hidden")) return;
+            steps.push(element);
+        });
+
+        console.log(steps);
+
+        const driverObj = driver.js.driver({
+            showProgress: true,
+            stagePadding: 5,
+            disableActiveInteraction: true, 
+            steps: steps
+        });
+        driverObj.drive();
+    });
 });
 
 // Get new data from the server using a GET request

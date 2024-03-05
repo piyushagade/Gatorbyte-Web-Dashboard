@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         
         <link rel="stylesheet" href="./assets/css/main.css">
@@ -8,17 +9,18 @@
         <link rel="stylesheet" href="./assets/css/scrollbar.css">
 
         <!-- Jquery -->
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
         <!-- Bootstrap -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-        <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
         
         <!-- Highcharts -->
         <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/highcharts/10.3.2/highstock.min.js'></script>
         <script src="https://code.highcharts.com/highcharts-more.js"></script> -->
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.2.0/highstock.min.js'></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.2.0/highcharts-more.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.3.0/highstock.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.3.0/highcharts-more.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/11.3.0/modules/broken-axis.min.js"></script>
         
         <!-- Mousetrap -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.5/mousetrap.min.js"></script>
@@ -27,6 +29,10 @@
         <script src="./assets/js/lib/screenlog.js"></script>
         <script src="./assets/js/lib/keys.js"></script>
         <script src="./assets/js/lib/activity.js"></script>
+
+        <!-- Driver.js -->
+        <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
         
         <!-- Moment.js -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
@@ -36,27 +42,27 @@
         
         <!-- Noty -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.js"></script>
-        <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.css">
 
         <!-- Themes -->
-        <link rel='stylesheet' href="./assets/css/themes/light.css"/>
-        <link rel='stylesheet' href="./assets/css/themes/dark.css"/>
+        <link rel="stylesheet" href="./assets/css/themes/light.css">
+        <link rel="stylesheet" href="./assets/css/themes/dark.css">
 
         <!-- Loading page -->
-        <link rel='stylesheet' href="./assets/css/loading.css"/>
+        <link rel="stylesheet" href="./assets/css/loading.css">
 
         <!-- Animate.css -->
-        <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css">
 
         <!-- Fontawesome -->
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
         <!-- Superplaceholder -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/superplaceholder/1.0.0/superplaceholder.min.js"></script>
 
         <!-- AES -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js'></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
         
         <!-- Socket IO -->
         <script src="https://sapi.ezbean-lab.com/socket.io/socket.io.js"></script>
@@ -69,14 +75,14 @@
         
         <!-- Leaflet -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js"></script>
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css'/>
-        <script src='./assets/js/leaflet.hotline.js'></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css">
+        <script src="./assets/js/leaflet.hotline.js"></script>
 
         <!-- Codemirror -->
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css' crossorigin='anonymous'/>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js' crossorigin='anonymous'></script>
-        <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js' crossorigin='anonymous'></script>
-        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/foldgutter.css' crossorigin='anonymous'/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" crossorigin="anonymous">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/foldgutter.css" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/lint/lint.min.css">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.58.2/addon/fold/foldcode.min.js"></script>
@@ -160,10 +166,9 @@
                     <!-- Settings buttons -->
                     <div class="row settings-menu-row" style="position: relative;">
                         
-                        <!-- Theme -->
-                        <div class="col-auto theme-select-button settings-menu-item shadow-light" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
-                            <i class="fa-solid fa-moon" style="margin-right: 4px;"></i>
-                            <span style="font-size: 13px;">Change theme</span>
+                        <!-- Walkthrough -->
+                        <div class="col-auto start-walkthrough-button settings-menu-item shadow-light" style="min-width: 32px;padding: 8px 11px;cursor: pointer;border-radius: 16px;width: 30px;margin-right: 8px;margin-bottom: 8px;">
+                            <i class="fa-solid fa-question" style="margin-right: 4px;"></i>
                         </div>
                         
                         <!-- Devices -->
@@ -185,21 +190,33 @@
                         </div>
                         
                         <!-- Site configuration -->
-                        <div class="col-auto show-hide-config-button settings-menu-item shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                        <div class="col-auto show-hide-config-button settings-menu-item requires-login requires-device-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
                             <i class="fa-solid fa-screwdriver-wrench" style=" font-size: 13px; margin-right: 4px;"></i>
                             <span class="text" style="font-size: 13px;">Configure</span>
                         </div>
                         
+                        <!-- Add a user -->
+                        <div class="col-auto add-user-button settings-menu-item requires-login requires-project-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-user-plus" style=" font-size: 13px; margin-right: 4px;"></i>
+                            <span class="text" style="font-size: 13px;">Add user</span>
+                        </div>
+                        
                         <!-- Add a project -->
-                        <div class="col-auto add-project-button settings-menu-item shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                        <div class="col-auto add-project-button settings-menu-item requires-login requires-project-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
                             <i class="fa-solid fa-plus" style=" font-size: 13px; margin-right: 4px;"></i>
                             <span class="text" style="font-size: 13px;">Add project</span>
                         </div>
                         
                         <!-- Add a device -->
-                        <div class="col-auto add-device-button settings-menu-item shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                        <div class="col-auto add-device-button settings-menu-item requires-login requires-device-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
                             <i class="fa-solid fa-microchip" style=" font-size: 13px; margin-right: 4px;"></i>
                             <span class="text" style="font-size: 13px;">Add device</span>
+                        </div>
+                        
+                        <!-- Theme -->
+                        <div class="col-auto theme-select-button settings-menu-item shadow-light" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-moon" style="margin-right: 4px;"></i>
+                            <span style="font-size: 13px;">Change theme</span>
                         </div>
                         
                         <!-- Logout -->
@@ -367,7 +384,7 @@
                             <div class="col console-input-parent" style="padding: 10px 14px 0 14px;">
                                 <form>
                                     <input id="console-input-text-box" type="text" style="outline: 0; height: 30px; font-size: 16px; margin-top: 2px; width:100%; background: transparent; border: 0; text-align: left; border-bottom: 1px solid #BBB; padding-left: 6px; padding-right: 6px;" placeholder="Input command and press enter">
-                                    <button class="console-input-submit-button hidden" style="display: none;"></button> 
+                                    <button type="submit" class="console-input-submit-button hidden" style="display: none;"></button> 
                                 </form>
                                 <div class="response hidden" style="font-size: 13px;width: fit-content; padding: 4px 8px; margin-bottom: 10px; border-radius: 12px;">
                                     <p style="margin-bottom: 0;"> <span style="font-weight: bold;">Response:</span> <span class="text" style="font-weight: 400;"></span></p>
