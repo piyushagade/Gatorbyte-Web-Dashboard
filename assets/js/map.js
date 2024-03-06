@@ -94,8 +94,21 @@ window.globals.apps["maps"] = function () {
         if (!window.globals.data["data-fields-readings-formatted"] || window.globals.data["data-fields-readings-formatted"].length == 0) return;
         self.map = window.globals.variables["gpsmap"];
 
+        var numberofdatatoshow = parseInt($(".map-filter-parent .map-filter-div .map-filter-number").val());
+        if ($(".map-filter-parent .map-filter-div .map-filter-number").val().trim().toLowerCase() == "all") numberofdatatoshow = 0;
+        if (isNaN(numberofdatatoshow)) {
+            numberofdatatoshow = 15; // 0 indicates inactive filter (all data points)
+            $(".map-filter-parent .map-filter-div .map-filter-number").val(numberofdatatoshow);
+        }
+        
+        // Remove old markers layer
+        if(self.map.hasLayer(global.markersLayer)) self.map.removeLayer(global.markersLayer);
+
+        // Add a new markers layer
+        global.markersLayer = L.layerGroup().addTo(self.map);
+
         window.globals.data["data-fields"].forEach(function (df, di) {
-            
+
             // If the config doesn't have a map field
             if(!df.MAP) return;
 
@@ -122,9 +135,9 @@ window.globals.apps["maps"] = function () {
 
             //! Add markers to the map
             window.globals.data["data-fields-readings-formatted"][df.ID].forEach((row, ri ) => {
-                // if (ri >= window.globals.data["data-fields-readings-formatted"][df.ID].length - 10) {
-                //     self.add_map_marker(row[1], row[2]);
-                // }
+
+                // Apply filter
+                if (numberofdatatoshow > 0 && window.globals.data["data-fields-readings-formatted"][df.ID].length - ri > numberofdatatoshow) return;
                 
                 // Add all
                 self.add_map_marker(row[1], row[2]);

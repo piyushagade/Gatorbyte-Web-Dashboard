@@ -161,15 +161,40 @@ window.globals.apps["readings"] = function () {
                 // Add html
                 $(".data-fields-list").find(df["HIGHLIGHT"] ? ".highlights-list" : ".non-highlights-list").append(multiline(function () {/* 
                     
-                    <!-- Map -->
-                    <div class="col-{{size}} shadow-light data-field" style="padding: 8px 8px; min-height: 100px; border-radius: 16px; margin: 5px 10px 5px 0px;">
-                        <div id="map-container" class="map-container" style="height: 550px;"></div>
+                
+                    <!-- Map container parent-->
+                    <div class="col-{{size}} shadow-light data-field {{id}}-map-container-parent" style="padding: 8px 8px; min-height: 100px; border-radius: 16px; margin: 5px 10px 5px 0px;">
+                        
+                        <!-- Filter -->
+                        <div class="map-filter-parent">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="map-filter-div">
+                                        <i class="fas fa-filter" style="margin-right: 8px; margin-top: 3px;"></i>
+                                        <span style="margin-right: 8px;">Showing the last</span>
+                                        <input class="map-filter-number" style="margin-right: 8px;"/>
+                                        <span>map markers.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Map container -->
+                        <div id="map-container" class="map-container {{id}}-map-container" style="height: 550px;"></div>
                     </div>
                 */},
                     {
+                        id: df.ID,
                         size: df["HIGHLIGHT"] ? "12" : "auto"
                     }
                 ));
+
+                // Filter listener
+                $("." + df.ID + "-map-container-parent .map-filter-div .map-filter-number").off("keyup").keyup(self.f.debounce(function () {
+                    var value = $(this).val();
+                    if (isNaN(parseInt(value))) return;
+                    window.globals.accessors["maps"].draw_all_data();
+                }, 1000));
             }
 
             //! Add chart ui

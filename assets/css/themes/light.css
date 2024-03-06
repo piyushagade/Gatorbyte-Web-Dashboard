@@ -348,3 +348,19 @@ body.light .button.blue {
 body.light .shadow-medium {
     box-shadow: 0 1px 14px rgba(184, 184, 184, 0.2) !important;
 }
+body.light .map-filter-parent .map-filter-div {
+    color: #3b3b3b;
+    padding: 4px 10px 8px 10px;
+    font-size: 14px;
+    display: inline-flex;
+    width: 100%;
+}
+body.light .map-filter-parent .map-filter-div .map-filter-number {
+    width: 40px; 
+    background: transparent; 
+    border: 0; 
+    outline: 0; 
+    color: rgb(29, 29, 29); 
+    text-align: center; 
+    border-bottom: 1px solid #adadad;
+}

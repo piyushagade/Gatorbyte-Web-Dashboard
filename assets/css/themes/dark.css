@@ -356,3 +356,20 @@ body.dark .button.blue {
 body.dark .shadow-medium {
     box-shadow: 0 1px 14px rgba(184, 184, 184, 0.2) !important;
 }
+
+body.dark .map-filter-parent .map-filter-div {
+    color: #c3c3c3;
+    padding: 4px 10px 8px 10px;
+    font-size: 14px;
+    display: inline-flex;
+    width: 100%;
+}
+body.dark .map-filter-parent .map-filter-div .map-filter-number {
+    width: 40px; 
+    background: transparent; 
+    border: 0; 
+    outline: 0; 
+    color: white; 
+    text-align: center; 
+    border-bottom: 1px solid #888;
+}
