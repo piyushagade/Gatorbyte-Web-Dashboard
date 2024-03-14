@@ -452,7 +452,7 @@ function functions_subapp(){
             for (var substitution of formula.match(valuesregex)) {
                 substitution = substitution.replace(/{{/g, "").replace(/}}/g, "");
 
-                var subvalue = substitution == "DATUM" ? df["CALIBRATION"]["VALUE"] : row[substitution];
+                var subvalue = df && substitution == "DATUM" ? df["CALIBRATION"]["VALUE"] : row[substitution];
                 evalstr = evalstr.replace(new RegExp("{{" + substitution + "}}",'g'), subvalue);
             }
         }
@@ -462,7 +462,7 @@ function functions_subapp(){
             for (var substitution of formula.match(variablesregex)) {
                 substitution = substitution.replace(/\[/g, "").replace(/\]/g, "");
 
-                var subvalue = substitution == "DATUM" ? df["CALIBRATION"]["VALUE"] : window.globals.data.site["VARIABLES"][substitution];
+                var subvalue = df && substitution == "DATUM" ? df["CALIBRATION"]["VALUE"] : window.globals.data.site["VARIABLES"][substitution];
                 evalstr = evalstr.replace(new RegExp("\\[" + substitution + "\\]", "g"), subvalue);
             }
         }
@@ -470,6 +470,23 @@ function functions_subapp(){
         // console.log(evalstr);
 
         return eval(evalstr);
+    }
+
+    self.applyvarsubstitution = function (string) {
+        var evalstr = string;
+        var variablesregex = /(\[[a-zA-Z0-9\-]+\])/g;
+
+        // Apply variable substitutions
+        if (string.match(variablesregex) != null) {
+            for (var substitution of string.match(variablesregex)) {
+                substitution = substitution.replace(/\[/g, "").replace(/\]/g, "");
+
+                var subvalue = window.globals.data.site["VARIABLES"][substitution];
+                evalstr = evalstr.replace(new RegExp("\\[" + substitution + "\\]", "g"), subvalue);
+            }
+        }
+
+        return evalstr;
     }
 
     self.volttolevel = function (x) {

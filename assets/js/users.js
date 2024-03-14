@@ -121,14 +121,15 @@ window.globals.apps["users"] = function () {
             
             var html = multiline(function () {/*
 
-                <div class="shadow-light config-editor-header" style="padding: 4px 10px;background: #c8dfde;margin-bottom: 16px;">
+                <div class="shadow config-editor-header" style="padding: 8px 16px;background: #a3a3a3;margin: 12px 0px 16px 0px;border-radius: 10px;">
                     <p style="margin-bottom: 5px;">Use the following editor to customize the dashboard for the selected device. Please use caution while making changes. Please read the documentation before you fiddle with any configuration.</p>
-                    <div class="update-config-button shadow" style="cursor: pointer;margin-bottom: 6px;background: #14440e;border: 0px solid #EEE;color: #EEE;padding: 6px 12px;width: fit-content;">
+
+                    <div class="update-config-button shadow" style="cursor: pointer;margin-bottom: 6px;background: #5e5e5e;border: 0px solid #EEE;color: #EEE;padding: 6px 12px;width: fit-content;border-radius: 2px;">
                         Update
                     </div>
                 </div>
 
-                <div class="site-config-div scrollbar-style" style="position: relative;height: -webkit-fill-available;overflow-y: auto;overflow-x: hidden;border: 2px solid #dddddd;">
+                <div class="site-config-div scrollbar-style" style="position: relative;height: -webkit-fill-available;overflow-y: auto;overflow-x: hidden;border: 2px solid #dddddd; border-radius: 10px;">
 
                     <div class="row shadow-light" style="">
                         <textarea class="codemirror-textarea"></textarea>
@@ -229,7 +230,9 @@ window.globals.apps["users"] = function () {
                                 data: JSON.stringify({
                                     "timestamp": new Date().getTime(),
                                     "data": parseddata,
-                                    "device-id": window.globals.constants["device"]["id"]
+                                    "device-sn": self.ls.getItem("state/device/sn"),
+                                    "device-id": self.ls.getItem("state/device/id"),
+                                    "project-id": self.ls.getItem("state/project/id"),
                                 }),
                                 success: function (response) {
                                     if (response.status == "success") self.f.create_notification("success", "Changes successfully applied.", "sunset");

@@ -20,7 +20,7 @@ window.globals.apps["readings"] = function () {
         window.globals.data["data-fields-readings-formatted"] = {};
         window.globals.data["data-fields-readings-reference-formatted"] = {};
         
-        //! Apply formula to data
+        //! Apply formula to data and process BVOLT
         window.globals.data["data-fields"].forEach(function (df, di) {
 
             if (df.FORMULA) {
@@ -56,7 +56,7 @@ window.globals.apps["readings"] = function () {
 
                 if (window.globals.data["data-fields-readings"].length > 0) {
                     const voltage = parseFloat(window.globals.data["data-fields-readings"].slice(-1)[0].BVOLT);
-                    var percentage = self.f.volttolevel(voltage);
+                    var percentage = self.f.volttolevel(voltage) || 0;
                     console.log("Last known battery level for " + voltage + "V: " + percentage.toFixed(2) + "%");
                 }
             }
@@ -65,91 +65,140 @@ window.globals.apps["readings"] = function () {
         // For each data point, create a data-field (map or chart)
         $(".data-summary-fields-list .list").html("");
         window.globals.data["data-fields"].forEach(function (df, di) {
+            
+            var datasource = df["SOURCE"] && df["SOURCE"]["TYPE"] ? df["SOURCE"]["TYPE"] : "gatorbyte"; 
 
             /*
-                ! Construct data
+                ! Construct data sourced from an external API service
             */
-            window.globals.data["data-fields-readings"].forEach(function (row, ri) {
-                if (!window.globals.data["data-fields-readings-formatted"][df.ID]) window.globals.data["data-fields-readings-formatted"][df.ID] = [];
+            if (datasource == "api") {
+                var baseurlstring = df["SOURCE"]["URL"] && df["SOURCE"]["URL"]["BASE"] ? df["SOURCE"]["URL"]["BASE"] : "";
+                var onurl = eval(df["SOURCE"]["FUNCTIONS"] && df["SOURCE"]["FUNCTIONS"]["ONURL"] ? df["SOURCE"]["FUNCTIONS"]["ONURL"] : "(url) { return url; }");
+                baseurlstring = onurl(baseurlstring);
 
-                if (df.CHART) {
+                var apiurl = self.f.applyvarsubstitution(baseurlstring);
+                var ondata = eval(df["SOURCE"]["FUNCTIONS"] && df["SOURCE"]["FUNCTIONS"]["ONDATA"] ? df["SOURCE"]["FUNCTIONS"]["ONDATA"] : "(data) { return []; }");
 
-                    var value = parseFloat(row[df.ID]);
-                    window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row.TIMESTAMP) * 1000 - parseInt(window.globals.variables["tz-offset"]) * 0, value]);
-                    
-                    // Is hvalue reference value?
-                    var hvalue = parseFloat("H" + row[df.ID]);
-                    if (!isNaN(hvalue)) window.globals.data["data-fields-readings-formatted"]["H" + df.ID].push([parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0, hvalue]);
+                $.ajax({
+                    type: 'GET',
+                    url: apiurl,
+                    success: function(data) {
 
-                }
-                else if (df.MAP) {
-                    window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row.TIMESTAMP), parseFloat(row["LAT"]), parseFloat(row["LNG"])]);
-                }
-                
-                if (df.QUICKVIEW) { 
+                        var parseddata = ondata(data);
 
-                    if (df.ID == "GPS") {
-                        // Set the data summary field with the latest data
-                        if (ri >= window.globals.data["data-fields-readings"].length - 1 - 20) {
+                        // console.log("Parsed data");
+                        // console.log(parseddata);
 
-                            setTimeout(() => {
-                                if (row["LAT"] == 0 || row["LNG"] == 0) return;
-                                $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(row["LAT"] + "," + row["LNG"]).css("cursor", "pointer").off("click").click(function () {
+                        parseddata.forEach(function (row, ri) {
+                            if (!window.globals.data["data-fields-readings-formatted"][df.ID]) window.globals.data["data-fields-readings-formatted"][df.ID] = [];
 
-                                    $("<a class='temp-url'>").prop({
-                                        target: "_map",
-                                        // href: 'https://www.latlong.net/c/?lat=' + row["LAT"] + '&long=' + row["LNG"]
-                                        // href: 'https://latitude.to/lat/' + row["LAT"] + '/lng/' + row["LNG"]
-                                        href: "https://www.google.com/maps/place/" + row["LAT"] + "," + row["LNG"]
-                                    })[0].click().remove();
-                                });
-                            }, 100);
-                        }
-                    }
-                    else {
+                            if (df.CHART) {
 
-                        var value = parseFloat(row[df.ID]);
-                        window.globals.data["data-fields-readings-formatted"][df.ID].push([(parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0) * 1000, value]);
-                        
-                        // Set the data summary field with the latest data
-                        if (ri == window.globals.data["data-fields-readings"].length - 1) {
-                            setTimeout(() => {
+                                var value = parseFloat(row["VALUE"]);
+                                window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row["TIMESTAMP"]) * 1000 - parseInt(window.globals.variables["tz-offset"]) * 0, value]);
+                            }
+                            else if (df.MAP) {
+                                window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row["TIMESTAMP"]), parseFloat(row["LAT"]), parseFloat(row["LNG"])]);
+                            }
+                        });
 
-                                var formattedvalue = value.toFixed(2);
-                                var format = df.QUICKVIEW && df.QUICKVIEW["TYPE"] ? df.QUICKVIEW["TYPE"] : "float";
+                        // Draw chart
+                        if (!window.globals.accessors["charts"]) window.globals.accessors["charts"] = new window.globals.apps["charts"]().init();
+                        window.globals.accessors["charts"].draw_all_data(df.ID);
 
-                                if (df.QUICKVIEW && df.QUICKVIEW["TYPE"] == "integer") {
-                                    formattedvalue = parseInt(value);
-                                }
-                                else if (df.QUICKVIEW && df.QUICKVIEW["TYPE"] == "float") {
-                                    formattedvalue = value.toFixed(df.QUICKVIEW["PRECISION"] ? df.QUICKVIEW["PRECISION"] : 2);
-                                }
-
-                                $(".data-summary-fields-list").removeClass("hidden");
-                                $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(value && !isNaN(formattedvalue) ? formattedvalue : "-");
-                                $(".data-summary-fields-list .last-update-timestamp").html(moment((parseInt(row.TIMESTAMP)) * 1000).format("LLL"));
-                            }, 100);
-                        }
-                    }
-                }
-
-            });
+                    },
+                    error: function (request, textStatus, errorThrown) { }
+                });
+            }
 
             /*
-                ! Construct reference data
+                ! Construct data sourced from the GatorByte device
             */
-            if (window.globals.data["data-fields-readings-reference"]) {
-                window.globals.data["data-fields-readings-reference"].forEach(function (row, ri) {
-                    if (!window.globals.data["data-fields-readings-reference-formatted"][df.ID]) window.globals.data["data-fields-readings-reference-formatted"][df.ID] = [];
-                    
+            if (datasource == "gatorbyte") {
+                window.globals.data["data-fields-readings"].forEach(function (row, ri) {
+                    if (!window.globals.data["data-fields-readings-formatted"][df.ID]) window.globals.data["data-fields-readings-formatted"][df.ID] = [];
+
                     if (df.CHART) {
+
                         var value = parseFloat(row[df.ID]);
-                        if (value && !isNaN(value)) window.globals.data["data-fields-readings-reference-formatted"][df.ID].push([(parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0) * 1000, value]);
+                        window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row.TIMESTAMP) * 1000 - parseInt(window.globals.variables["tz-offset"]) * 0, value]);
+                        
+                        // Is hvalue reference value?
+                        var hvalue = parseFloat("H" + row[df.ID]);
+                        if (!isNaN(hvalue)) window.globals.data["data-fields-readings-formatted"]["H" + df.ID].push([parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0, hvalue]);
+
                     }
                     else if (df.MAP) {
-                        window.globals.data["data-fields-readings-reference-formatted"][df.ID].push([parseInt(row.TIMESTAMP), parseFloat(row["LAT"]), parseFloat(row["LNG"])]);
+                        window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row.TIMESTAMP), parseFloat(row["LAT"]), parseFloat(row["LNG"])]);
                     }
+                    
+                    if (df.QUICKVIEW) { 
+
+                        if (df.ID == "GPS") {
+                            // Set the data summary field with the latest data
+                            if (ri >= window.globals.data["data-fields-readings"].length - 1 - 20) {
+
+                                setTimeout(() => {
+                                    if (row["LAT"] == 0 || row["LNG"] == 0) return;
+                                    $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(row["LAT"] + "," + row["LNG"]).css("cursor", "pointer").off("click").click(function () {
+
+                                        $("<a class='temp-url'>").prop({
+                                            target: "_map",
+                                            // href: 'https://www.latlong.net/c/?lat=' + row["LAT"] + '&long=' + row["LNG"]
+                                            // href: 'https://latitude.to/lat/' + row["LAT"] + '/lng/' + row["LNG"]
+                                            href: "https://www.google.com/maps/place/" + row["LAT"] + "," + row["LNG"]
+                                        })[0].click().remove();
+                                    });
+                                }, 100);
+                            }
+                        }
+
+                        else {
+
+                            var value = parseFloat(row[df.ID]);
+                            window.globals.data["data-fields-readings-formatted"][df.ID].push([(parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0) * 1000, value]);
+                            
+                            // Set the data summary field with the latest data
+                            if (ri == window.globals.data["data-fields-readings"].length - 1) {
+                                setTimeout(() => {
+
+                                    var formattedvalue = value.toFixed(2);
+                                    var format = df.QUICKVIEW && df.QUICKVIEW["TYPE"] ? df.QUICKVIEW["TYPE"] : "float";
+
+                                    if (df.QUICKVIEW && df.QUICKVIEW["TYPE"] == "integer") {
+                                        formattedvalue = parseInt(value);
+                                    }
+                                    else if (df.QUICKVIEW && df.QUICKVIEW["TYPE"] == "float") {
+                                        formattedvalue = value.toFixed(df.QUICKVIEW["PRECISION"] ? df.QUICKVIEW["PRECISION"] : 2);
+                                    }
+
+                                    $(".data-summary-fields-list").removeClass("hidden");
+                                    $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(value && !isNaN(formattedvalue) ? formattedvalue : "-");
+                                    $(".data-summary-fields-list .last-update-timestamp").html(moment((parseInt(row.TIMESTAMP)) * 1000).format("LLL"));
+                                }, 100);
+                            }
+                        }
+                    }
+
                 });
+
+                /*
+                    ! Construct reference data
+                */
+                if (window.globals.data["data-fields-readings-reference"]) {
+                    window.globals.data["data-fields-readings-reference"].forEach(function (row, ri) {
+                        if (!window.globals.data["data-fields-readings-reference-formatted"][df.ID]) window.globals.data["data-fields-readings-reference-formatted"][df.ID] = [];
+                        
+                        if (df.CHART) {
+                            var value = parseFloat(row[df.ID]);
+                            if (value && !isNaN(value)) window.globals.data["data-fields-readings-reference-formatted"][df.ID].push([(parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0) * 1000, value]);
+                        }
+                        else if (df.MAP) {
+                            window.globals.data["data-fields-readings-reference-formatted"][df.ID].push([parseInt(row.TIMESTAMP), parseFloat(row["LAT"]), parseFloat(row["LNG"])]);
+                        }
+                    });
+                }
+
             }
 
             //! Add map ui
@@ -366,6 +415,11 @@ window.globals.apps["readings"] = function () {
                     }
                 ));
 
+
+                // Draw chart
+                if (!window.globals.accessors["charts"]) window.globals.accessors["charts"] = new window.globals.apps["charts"]().init();
+                window.globals.accessors["charts"].draw_all_data(df.ID);
+
             }
 
             //! Add quickview base ui
@@ -459,7 +513,7 @@ window.globals.apps["readings"] = function () {
                 }
             }, 300));
 
-            
+            //! Popup chart
             $(".data-fields-list .expand-data-field-button").off("click").click(function () {
                 var root = $(this).parent().parent().parent();
 
@@ -491,10 +545,11 @@ window.globals.apps["readings"] = function () {
                     },
                     theme: self.ls.getItem("/settings/theme") || "dark",
                     on_load: function () {
+
                         /*
                             ! Prepare data
                         */
-                       
+                        
                         var timestamp_data = {}, series_data = {};
                         window.globals.data["data-fields-readings-formatted"][series_id].forEach(function(d, i) {
 
@@ -814,12 +869,11 @@ window.globals.apps["readings"] = function () {
 
         // Initialize map
         if (!window.globals.accessors["maps"]) window.globals.accessors["maps"] = new window.globals.apps["maps"]().init();
-
         window.globals.accessors["maps"].draw_all_data();
                 
-        // Initialize charts
-        if (!window.globals.accessors["charts"]) window.globals.accessors["charts"] = new window.globals.apps["charts"]().init();
-        window.globals.accessors["charts"].draw_all_data();
+        // // Initialize charts
+        // if (!window.globals.accessors["charts"]) window.globals.accessors["charts"] = new window.globals.apps["charts"]().init();
+        // window.globals.accessors["charts"].draw_all_data();
                 
         // // Initialize quickview
         // if (!window.globals.accessors["quickview"]) window.globals.accessors["quickview"] = new window.globals.apps["quickview"]().init();

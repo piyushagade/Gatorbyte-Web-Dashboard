@@ -15,15 +15,29 @@ window.globals.apps["charts"] = function () {
     }
 
     // Make charts for all datafields
-    self.draw_all_data = function () {
+    self.draw_all_data = function (targetchartname) {
 
-        window.globals.data["data-fields"].forEach(function (df, di) {
-            if (df.CHART) {
+        // Draw all charts
+        if (!targetchartname) {
+            window.globals.data["data-fields"].forEach(function (df, di) {
+                if (df && df.CHART) {
+
+                    if (df["CHART"]["TYPE"] == "stocks") make_stock(df, df.ID, df.NAME);
+                    else if (df["CHART"]["TYPE"] == "line") make_chart(df, df.ID, df.NAME);
+                }
+            });
+        }
+
+        // Draw the request chart only
+        else {
+
+            var df = self.f.grep(window.globals.data["data-fields"], "ID", targetchartname, true);
+            if (df && df.CHART) {
 
                 if (df["CHART"]["TYPE"] == "stocks") make_stock(df, df.ID, df.NAME);
                 else if (df["CHART"]["TYPE"] == "line") make_chart(df, df.ID, df.NAME);
             }
-        });
+        }
 
         function make_chart(df, chart_name, series_name) {
 
