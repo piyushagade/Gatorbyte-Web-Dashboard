@@ -16,6 +16,8 @@ window.globals.apps["quickview"] = function () {
 
         window.globals.data["data-fields"].forEach(function (df, di) {
             if (df.CHART) {
+
+                console.log(df.ID);
                 
                 if (df["CHART"]["TYPE"] == "stocks") make_stock(df, df.ID, df.NAME);
                 else if (df["CHART"]["TYPE"] == "line") make_chart(df, df.ID, df.NAME);

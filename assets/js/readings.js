@@ -64,6 +64,10 @@ window.globals.apps["readings"] = function () {
 
         // For each data point, create a data-field (map or chart)
         $(".data-summary-fields-list .list").html("");
+
+        // Order the data fields
+        window.globals.data["data-fields"] = window.globals.data["data-fields"].sort(function (a, b) { return a["ORDER"] < b["ORDER"] ? - 1 : 1; });
+
         window.globals.data["data-fields"].forEach(function (df, di) {
             
             var datasource = df["SOURCE"] && df["SOURCE"]["TYPE"] ? df["SOURCE"]["TYPE"] : "gatorbyte"; 
