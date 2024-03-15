@@ -90,9 +90,6 @@ window.globals.apps["readings"] = function () {
 
                         var parseddata = ondata(data);
 
-                        // console.log("Parsed data");
-                        // console.log(parseddata);
-
                         parseddata.forEach(function (row, ri) {
                             if (!window.globals.data["data-fields-readings-formatted"][df.ID]) window.globals.data["data-fields-readings-formatted"][df.ID] = [];
 
