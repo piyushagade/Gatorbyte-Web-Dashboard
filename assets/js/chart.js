@@ -28,7 +28,7 @@ window.globals.apps["charts"] = function () {
             });
         }
 
-        // Draw the request chart only
+        // Draw the requested chart only
         else {
 
             var df = self.f.grep(window.globals.data["data-fields"], "ID", targetchartname, true);
@@ -37,6 +37,51 @@ window.globals.apps["charts"] = function () {
                 if (df["CHART"]["TYPE"] == "stocks") make_stock(df, df.ID, df.NAME);
                 else if (df["CHART"]["TYPE"] == "line") make_chart(df, df.ID, df.NAME);
             }
+        }
+
+        // Draw plot lines
+        if (df.CHART.PLOTLINES && df.CHART.PLOTLINES.HORIZONTAL) {
+            var chart = $("#" + df.ID + "-line-chart").highcharts();
+            const xAxis = chart.xAxis[0];
+
+            df.CHART.PLOTLINES.HORIZONTAL.forEach(function (pl, pli) {
+
+                xAxis.chart.yAxis[0].addPlotLine({
+                    value: pl.VALUE,
+                    color: pl.COLOR || '#AAAAAA', // You can customize the color
+                    width: pl.WIDTH || 1,
+                    id: pl.ID || pl.TITLE.toLowerCase().replace(/\s/g, "-"),
+                    label: {
+                        text: pl.TITLE || null,
+                        align: pl.ALIGN || 'left',
+                        style: {
+                            color: pl.TITLECOLOR || 'red' // You can customize the label color
+                        }
+                    }
+                });
+            })
+        }
+        
+        if (df.CHART.PLOTLINES && df.CHART.PLOTLINES.VERTICAL) {
+            var chart = $("#" + df.ID + "-line-chart").highcharts();
+            const xAxis = chart.xAxis[0];
+
+            df.CHART.PLOTLINES.VERTICAL.forEach(function (pl, pli) {
+
+                xAxis.addPlotLine({
+                    value: pl.VALUE,
+                    color: pl.COLOR || '#AAAAAA', // You can customize the color
+                    width: pl.WIDTH || 1,
+                    id: pl.ID || pl.TITLE.toLowerCase().replace(/\s/g, "-"),
+                    label: {
+                        text: pl.TITLE || null,
+                        align: pl.ALIGN || 'left',
+                        style: {
+                            color: pl.TITLECOLOR || 'red' // You can customize the label color
+                        }
+                    }
+                });
+            })
         }
 
         function make_chart(df, chart_name, series_name) {

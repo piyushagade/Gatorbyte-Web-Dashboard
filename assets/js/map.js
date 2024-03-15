@@ -93,11 +93,12 @@ window.globals.apps["maps"] = function () {
     self.draw_all_data = function () {
         if (!window.globals.data["data-fields-readings-formatted"] || window.globals.data["data-fields-readings-formatted"].length == 0) return;
         self.map = window.globals.variables["gpsmap"];
+        if (!self.map) return;
 
         var numberofdatatoshow = parseInt($(".map-filter-parent .map-filter-div .map-filter-number").val());
-        if ($(".map-filter-parent .map-filter-div .map-filter-number").val().trim().toLowerCase() == "all") numberofdatatoshow = 0;
+        if (!numberofdatatoshow || $(".map-filter-parent .map-filter-div .map-filter-number").val().trim().toLowerCase() == "all") numberofdatatoshow = 0;
         if (isNaN(numberofdatatoshow)) {
-            numberofdatatoshow = 15; // 0 indicates inactive filter (all data points)
+            numberofdatatoshow = 15; // 0 indicates inactive filter (shows all data points)
             $(".map-filter-parent .map-filter-div .map-filter-number").val(numberofdatatoshow);
         }
         
