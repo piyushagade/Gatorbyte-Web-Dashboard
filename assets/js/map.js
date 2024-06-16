@@ -97,11 +97,11 @@ window.globals.apps["maps"] = function () {
 
         var numberofdatatoshow = parseInt($(".map-filter-parent .map-filter-div .map-filter-number").val());
         if (!numberofdatatoshow || $(".map-filter-parent .map-filter-div .map-filter-number").val().trim().toLowerCase() == "all") numberofdatatoshow = 0;
-        if (isNaN(numberofdatatoshow)) {
+        if (!numberofdatatoshow || isNaN(numberofdatatoshow)) {
             numberofdatatoshow = 15; // 0 indicates inactive filter (shows all data points)
             $(".map-filter-parent .map-filter-div .map-filter-number").val(numberofdatatoshow);
         }
-        
+
         // Remove old markers layer
         if(self.map.hasLayer(global.markersLayer)) self.map.removeLayer(global.markersLayer);
 

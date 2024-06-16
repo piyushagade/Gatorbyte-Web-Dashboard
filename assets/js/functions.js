@@ -542,6 +542,89 @@ function functions_subapp(){
         var targetNoun = Math.round(Math.random() * noun.length);
         return adj[targetAdj] + "-" + noun[targetNoun];
     }
+
+    self.waterfall = function (tasks, variables) {
+        if (!variables) variables = {};
+
+        return new Promise(function (resolve, reject) {
+            if (!tasks) reject(new Error("Tasks array wasn't provided as an argument."));
+
+            var counter = 0;
+            tasks.forEach(function (task, ti) {
+                
+                //! If the task is a Promise
+                if (task && task.then && typeof task.then == "function") {
+                    task
+                        .then(function (variables) {
+                            counter++;
+                            if (counter == tasks.length) resolve({...variables});
+                        })
+                        .catch(function (err) {
+                            counter++;
+                            if (counter == tasks.length) resolve(err);
+                        });
+                }
+
+                //! If the task is a function
+                else if (task && typeof task == "function") {
+                    variables = task(variables);
+                    counter++;
+                    if (counter == tasks.length) resolve({...variables});
+                }
+
+                else {
+                    console.error("Waterfall task is undefined. Ensure task is a function or a Promise.")
+                }
+            });
+        });
+    }
+
+    /*
+        ! Execute tasks in a sequence.
+        tasks - An array of functions. If a functions returns a promise, the
+                waterfall  waits for the promise to resolve before moving on
+                to executing the next function.
+
+        variables - A JSON object to share data between functions in the 
+                    tasks array. For this to work each task should either
+                    return 'variables', or the resolve(variables).
+    */
+    self.waterfall_plus = function(tasks, variables = {}) {
+        
+        // Check if tasks array was provided
+        if (!tasks || !Array.isArray(tasks)) {
+            throw new Error("Tasks array wasn't provided as an argument.");
+        }
+    
+        // Helper function to handle execution of tasks
+        const executeTask = async (index) => {
+            if (typeof tasks[index] == "function") {
+                var returned = tasks[index](variables);
+                if (returned && returned.then && typeof returned.then == "function") {
+                    returned
+                        .then (function (variables) {
+                            executeTask(index + 1);
+                        })
+                        .catch (function (variables) {
+                            executeTask(index + 1);
+                        });
+                }
+                else {
+                    executeTask(index + 1);
+                }
+            }
+        };
+    
+        // Start executing tasks from the first index
+        return executeTask(0).then(result => {
+            // Resolve the outer Promise with the final result
+            return result;
+        }).catch(error => {
+            // Reject the outer Promise if any error occurs
+            throw error;
+        });
+    };
+    
 }
 
 function isScrolledIntoView(elem){

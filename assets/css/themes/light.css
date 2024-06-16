@@ -283,6 +283,14 @@ body.light .chart-stats-div .stat-item .value {
 }
 
 body.light .settings-menu-item {
+    min-width: 32px; 
+    padding: 4px 10px;
+    cursor: pointer; 
+    border-radius: 16px;
+    width: auto;
+    margin-right: 8px; 
+    margin-bottom: 8px; 
+    position: relative;
     background: #FFFFFF;
     color: #444444;
 }
@@ -291,6 +299,39 @@ body.light .settings-menu-item.logout-button {
     color: #444444;
 }
 
+body.light .settings-menu-item .expanded-menu {
+    min-width: 32px;
+    padding: 3px 3px;
+    cursor: pointer;
+    border-radius: 12px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    background: #FFFFFF;
+    color: #444444;
+    position: absolute;
+    top: 40px;
+    z-index: 1;
+    width: max-content;
+    left: 14px;
+}
+body.light .settings-menu-item .expanded-menu .expanded-menu-item {
+    padding: 2px 10px 4px 10px;
+    border-bottom: 1px solid #EEE;
+    border-radius: 4px;
+}
+body.light .settings-menu-item .expanded-menu .expanded-menu-item:hover {
+    background-color: #DDDDDD;
+}
+body.light .settings-menu-item .expanded-menu .expanded-menu-item:first-child {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+body.light .settings-menu-item .expanded-menu .expanded-menu-item:last-child {
+    border-bottom: 0px;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+    
 body.light .device-menu {
     z-index: 10000;
     background: #001f33e8;
@@ -363,4 +404,17 @@ body.light .map-filter-parent .map-filter-div .map-filter-number {
     color: rgb(29, 29, 29); 
     text-align: center; 
     border-bottom: 1px solid #adadad;
+}
+
+body.light .external-chart-tooltip-parent {
+    background: #20282dd9;
+    color: #c9c9c9;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
+    position: absolute; 
+    bottom: 20px; 
+    left: 20px; 
+    padding: 10px; 
+    z-index: 1000;
 }

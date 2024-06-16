@@ -4,11 +4,19 @@ window.globals.apps["sites"] = function () {
     self.ls = window.sls;
 
     self.init = function (callback) {
+        
+        // Show notification
+        $(".notification-parent-ui .no-site-selected-notification").removeClass("hidden");
+        $(".project-device-selector-button").addClass("an-flash");
+
+        // drawArrow('startDiv', 'devicesBtn', 10, '#f00', 'round');
+
         self.listeners();
 
         return self;
     }
 
+    // Fetch devices information from the server
     self.get_all_devices = function(callback) {
 
         $.ajax({
@@ -21,9 +29,6 @@ window.globals.apps["sites"] = function () {
             }),
             success: function(response) {
 
-                var alldevices = response.payload.devices;
-                var accessibledevices = response.payload.access;
-
                 if (callback && typeof callback == "function") callback(response.payload);
             },
             error: function (request, textStatus, errorThrown) { 
@@ -32,6 +37,7 @@ window.globals.apps["sites"] = function () {
         });
     }
 
+    // Fetch a device's dashboard's configuration data
     self.get_site_config_data = function(callback) {
 
         $.ajax({
@@ -55,7 +61,7 @@ window.globals.apps["sites"] = function () {
 
     self.on_site_selected = function (callback) {
         
-        var allowedsites = window.globals.data["devices"];
+        var allowedsites = window.globals.data["all-devices"];
 
         // Check if the user has permission to see the site data
         if (!self.f.grep(allowedsites, "UUID", self.ls.getItem("state/device/uuid"), true)) {
@@ -74,6 +80,7 @@ window.globals.apps["sites"] = function () {
 
         // Hide notification
         $(".notification-parent-ui .no-site-selected-notification").addClass("hidden");
+        $(".project-device-selector-button").removeClass("an-flash");
 
         // Show charts, events monitor, and console in GUI
         $(".map-row").removeClass("hidden");[]
@@ -109,7 +116,7 @@ window.globals.apps["sites"] = function () {
         // Get site's config data
         self.get_site_config_data(function (site) {
 
-            var allowedsites = window.globals.data["devices"];
+            var allowedsites = window.globals.data["all-devices"];
             var devicerole = self.ls.getItem("state/device/role");
             var projectrole = self.ls.getItem("state/project/role");
 
@@ -117,7 +124,7 @@ window.globals.apps["sites"] = function () {
             if (projectrole == "super" || projectrole == "admin") {
                 console.log("The user is an admin/super for the project.");
                 
-                $(".settings-menu-row").find(".add-user-button").removeClass("hidden");
+                $(".settings-menu-row").find(".users-menu-button").removeClass("hidden");
                 $(".settings-menu-row").find(".add-project-button").removeClass("hidden");
                 $(".settings-menu-row").find(".manage-projects-button").removeClass("hidden");
                 $(".settings-menu-row").find(".add-device-button").removeClass("hidden");
@@ -125,7 +132,7 @@ window.globals.apps["sites"] = function () {
             else {
                 console.log("The user is NOT an admin/super for the project.");
 
-                $(".settings-menu-row").find(".add-user-button").addClass("hidden").off("click");
+                $(".settings-menu-row").find(".users-menu-button").addClass("hidden").off("click");
                 $(".settings-menu-row").find(".add-project-button").addClass("hidden").off("click");
                 $(".settings-menu-row").find(".manage-projects-button").addClass("hidden").off("click");
                 $(".settings-menu-row").find(".add-device-button").addClass("hidden").off("click");

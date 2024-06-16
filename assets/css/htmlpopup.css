@@ -1,0 +1,265 @@
+/* @import url('https://unpkg.com/css.gg@2.0.0/icons/css/check.css'); */
+
+.popup-container {
+    pointer-events: all;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 20px;
+    background: rgba(26, 26, 26, 0.6);
+    top: 0;
+    position: absolute;
+    z-index: 1000000;
+    overflow-y: hidden;
+}
+
+.popup-container .body p {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 24px !important;
+}
+
+.popup-container .body .required-tag {
+    /* line-height: 18px !important;
+    font-size: 11px;
+    color: #b96171;
+    margin: 8px 0 0;
+    background: #ffd7d7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    width: -moz-fit-content;
+    width: fit-content; */
+
+    line-height: 18px !important;
+    font-size: 11px;
+    color: #655d33;
+    margin: 8px 0 0;
+    background: #ffe9b7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    width: -moz-fit-content;
+    width: fit-content;
+}
+.popup-container .body .required-tag.highlighted {
+    line-height: 18px !important;
+    font-size: 11px;
+    color: #574347;
+    margin: 8px 0 0;
+    background: #ffa8a8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    width: -moz-fit-content;
+    width: fit-content;
+}
+.popup-container .body .required-tag.highlighted::after {
+    content: "This field cannot be empty.";
+}
+
+.popup-container .body .required-tag::after {
+    content: "Required";
+}
+
+.popup-container button {
+    border-radius: 2px;
+    transform: scale(0.88);
+    margin-top: 2px;
+    font-size: 15px;
+    border: 0;
+    outline: 0;
+    padding: 8px 12px;
+    cursor: pointer;
+    box-shadow: 0 -4px 22px rgb(0 0 0 / -6%), 0 6px 6px rgb(0 0 0 / 16%) !important;
+}
+
+.popup-container button.green {
+    background: #229737;
+    color: #ededed;
+}
+
+.popup-container button.grey {
+    background: #404040;
+    color: #ededed;
+}
+
+.popup-container .panel {
+    border-radius: 6px;
+    padding: 12px 12px;
+}
+
+.popup-container .panel:not(:last-child) {
+    border-bottom: 1px solid #bbbbbb00;
+    margin-bottom: 16px;
+}
+
+.popup-container .panel:last-child {
+    /* padding-bottom: 16px; */
+}
+
+.popup-container .title {
+    font-size: 22px;
+    margin-bottom: 0px;
+    padding: 0;
+    color: #333333;
+    line-height: 30px;
+}
+
+.popup-container .subtitle {
+    font-size: 14px;
+    margin-bottom: 0px;
+    padding: 0;
+    color: #595959;
+    font-weight: 400;
+    line-height: 20px;
+}
+
+.popup-container .panel.light {
+    background: #ffffff;
+    box-shadow: 0 -8px 20px rgb(0 0 0 / 4%), 0 6px 10px rgb(0 0 0 / 6%) !important;
+}
+
+.popup-container .panel .title {
+    font-size: 14px;
+    color: #535353;
+    font-weight: 600;
+}
+
+.popup-container .action-buttons-parent button {
+    padding: 10px 12px;
+    line-height: normal;
+}
+
+.unauthorized-notification-parent {
+    background-color: #ffbd30aa;
+    padding: 8px 14px;
+    border-radius: 8px;
+    width: -moz-fit-content;
+    width: fit-content;
+}
+
+/* Loader */
+.loader {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    margin: auto auto;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    height: 48px;
+}
+
+.loader .line {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    background-color: #db844b;
+}
+
+.loader .line:nth-last-child(1) {
+    animation: loaderanimation 0.6s 0.1s linear infinite;
+}
+
+.loader .line:nth-last-child(2) {
+    animation: loaderanimation 0.6s 0.2s linear infinite;
+}
+
+.loader .line:nth-last-child(3) {
+    animation: loaderanimation 0.6s 0.3s linear infinite;
+}
+
+@keyframes loaderanimation {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(0, 15px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+.hidden {
+    display: none !important;
+}
+
+.shadow-light {
+    box-shadow: 0 -8px 20px rgb(0 0 0 / 8%), 0 6px 10px rgb(0 0 0 / 12%) !important;
+}
+
+.shadow {
+    box-shadow: 0 -8px 20px rgb(0 0 0 / 12%), 0 6px 10px rgb(0 0 0 / 16%) !important;
+}
+
+.shadow-medium {
+    box-shadow: 0 2.5rem 8rem rgba(0, 0, 0, 1) !important;
+}
+
+.shadow-heavy {
+    box-shadow: 0 2.5rem 8rem rgba(0, 0, 0, 1) !important;
+}
+
+.shadow-super-heavy {
+    box-shadow: 0rem 0.5rem 108rem 11rem rgb(0, 0, 0, 0.75) !important
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.truncate-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.absolute-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -moz-transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.popup-container .notification {
+    margin: 10px 10px 4px 10px;
+    padding: 2px 12px 2px 4px;
+    background: #ffffff9e;
+    border-radius: 6px;
+    box-shadow: 0 -8px 20px rgb(0 0 0 / 4%), 0 6px 10px rgb(0 0 0 / 6%) !important;
+    color: #222222;
+    display: inline-flex;
+}
+
+.popup-container .notification.error {
+    background: #d3450d;
+    color: #FFFFFF;
+}
+
+.popup-container .notification.info {
+    background: #1291cf;
+    color: #FFFFFF;
+}
+
+.popup-container .notification.warning {
+    background: #cf8b0b;
+    color: #FFFFFF;
+}
+
+.popup-container .notification.success {
+    background: #469500;
+    color: #FFFFFF;
+}
+
+.popup-container .notification .icon-container {
+    padding-top: 4px;
+    max-height: 30px;
+    margin-right: 6px;
+}

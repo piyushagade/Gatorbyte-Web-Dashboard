@@ -24,6 +24,9 @@ window.globals.apps["projects"] = function () {
                 var allprojects = response.payload.projects;
                 var accessibleprojects = response.payload.access;
 
+                window.globals.data["all-projects"] = allprojects;
+                window.globals.data["accessible-projects"] = accessibleprojects;
+
                 accessibleprojects.forEach(function (accessrow, ari) {
                     var projectuuid = accessrow["PROJECTUUID"];
                     var projectdata = self.f.grep(allprojects, "UUID", projectuuid, true);
@@ -47,15 +50,21 @@ window.globals.apps["projects"] = function () {
                     var alldevices = sitesdata.devices;
                     var accessibledevices = sitesdata.access;
 
-                    window.globals.data["devices"] = [];
+                    window.globals.data["accessible-devices"] = accessibledevices;
+                    window.globals.data["all-devices"] = [];
                     accessibledevices.forEach(function (accessrow, ari) {
                         var deviceuuid = accessrow["DEVICEUUID"];
                         var devicedata = self.f.grep(alldevices, "UUID", deviceuuid, true);
-                        window.globals.data["devices"].push(devicedata);
+                        window.globals.data["all-devices"].push(devicedata);
                     });
                     
                     // Project click listener
                     $(".device-menu .projects-list").find(".projects-list-item").off("click").on("click", function () {
+                        
+                        $(".devices-list .projects-list-item").removeClass("selected");
+                        $(this).addClass("selected");
+                        $(".devices-list").find(".project-not-selected-notification").addClass("hidden");
+
                         var that = this;
                         $(".devices-list .devices-list-item").remove();
                         var data = self.f.b64_to_json($(that).attr("data-b64"));
@@ -70,90 +79,104 @@ window.globals.apps["projects"] = function () {
                         self.ls.setItem("state/project/name", projectname);
                         self.ls.setItem("state/project/role", projectrole);
 
-                        accessibledevices.forEach(function (accessrow, ari) {
-                            var deviceuuid = accessrow["DEVICEUUID"];
-                            var devicedata = self.f.grep(alldevices, "UUID", deviceuuid, true);
-                            
-                            if (devicedata["PROJECTUUID"] != projectuuid) return;
-                            
-                            $(".devices-list").removeClass("hidden");
-                            $(".devices-list").append(multiline (function () {/* 
-                                <div class="col-auto devices-list-item ui-truncate" project-id="{{project-id}}" device-uuid="{{device-uuid}}" device-sn="{{device-sn}}" device-id="{{device-id}}" device-name="{{device-name}}" device-role="{{device-role}}">
-                                    {{device-name}}
-                                </div>
-                            */},
-                            {
-                                "project-id": projectid,
-                                "project-uuid": projectuuid,
-                                "device-name": devicedata["NAME"],
-                                "device-role": accessrow["ROLE"],
-                                "device-id": devicedata["NAME"],
-                                "device-sn": devicedata["SN"],
-                                "device-uuid": devicedata["UUID"]
-                            }));
+                        if (accessibledevices.length == 0) {
+                            $(".devices-list").find(".empty-notification").removeClass("hidden");
+                        }
+                        else {
+                            $(".devices-list").find(".empty-notification").addClass("hidden");
 
-                            $(".devices-list .devices-list-item").off("click").click(function () {
-                                var devicetype = "gatorbyte";
-                                var projectid = $(this).attr("project-id");
-                                var deviceid = $(this).attr("device-id");
-                                var deviceuuid = $(this).attr("device-uuid");
-                                var devicesn = $(this).attr("device-sn");
-                                var devicename = $(this).attr("device-name");
-                                var devicerole = $(this).attr("device-role");
-
-                                if (!devicesn) console.log("Device's SN is not set.");
-    
-                                $(".project-device-selector-button .selected-device-name").html(devicename);
+                            accessibledevices.forEach(function (accessrow, ari) {
+                                var deviceuuid = accessrow["DEVICEUUID"];
+                                var devicedata = self.f.grep(alldevices, "UUID", deviceuuid, true);
                                 
-                                self.f.set_state("?p=" + projectid + "&d=" + deviceid);
-    
-                                $(".devices-list .devices-list-item").removeClass("selected");
-                                $(this).addClass("selected");
-    
-                                // Leave room of OLD device
-                                if (self.ls.getItem("state/device/sn")) {
-                                    window.globals.accessors["socket"].publish({
-                                        action: "room/leave",
-                                        payload: self.ls.getItem("state/device/sn")
-                                    });
-                                }
-    
-                                // Set selected device to localStorage
-                                self.ls.setItem("state/device/id", deviceid);
-                                self.ls.setItem("state/device/uuid", deviceuuid);
-                                self.ls.setItem("state/device/sn", devicesn);
-                                self.ls.setItem("state/device/name", devicename);
-                                self.ls.setItem("state/device/role", devicerole);
+                                if (devicedata["PROJECTUUID"] != projectuuid) return;
+                                
+                                $(".devices-list").removeClass("hidden");
+                                $(".devices-list").append(multiline (function () {/* 
+                                    <div class="col-auto devices-list-item ui-truncate" project-id="{{project-id}}" device-uuid="{{device-uuid}}" device-sn="{{device-sn}}" device-id="{{device-id}}" device-name="{{device-name}}" device-role="{{device-role}}">
+                                        {{device-name}}
+                                    </div>
+                                */},
+                                {
+                                    "project-id": projectid,
+                                    "project-uuid": projectuuid,
+                                    "device-name": devicedata["NAME"],
+                                    "device-role": accessrow["ROLE"],
+                                    "device-id": devicedata["NAME"],
+                                    "device-sn": devicedata["SN"],
+                                    "device-uuid": devicedata["UUID"]
+                                }));
 
-                                // Set device id
-                                window.globals.constants["device"]["id"] = devicename;
-                                window.globals.constants["device"]["name"] = devicename;
-                                window.globals.constants["device"]["uuid"] = deviceuuid;
-                                window.globals.constants["device"]["type"] = devicetype;
-                                window.globals.constants["device"]["sn"] = devicesn;
-            
-                                // Call on_device_selected function
-                                window.globals.accessors["sites"].on_site_selected(callback);
-    
-                                //  Recreate chart
-                                let chart = $("#chart-container").highcharts();
-                                while(chart && chart.series.length > 0) chart.series[0].remove(true);
-    
-                                // Get site config data
-                                window.globals.accessors["sites"].get_site_config_data(deviceid, function() {
-                                    var devicedata = window.globals.data["device"];
-    
-                                    // $(".sites-list").addClass("hidden");
-                                    // $(".sites-info").removeClass("hidden");
-                                    // $(".sites-info .site-name").text(sitename);
-                                    // $(".sites-info .site-id").text(siteid);
-                                    // $(".sites-info .site-address").text(sitedata["ADDRESS"]["LOCATION"]);
-                                    // $(".sites-info .site-installed-on-date").text(sitedata["INSTALLED-ON"]);
-                                })
-    
-                            });
+                                $(".devices-list .devices-list-item").off("click").click(function (e) {
+                                    var devicetype = "gatorbyte";
+                                    var projectid = $(this).attr("project-id");
+                                    var deviceid = $(this).attr("device-id");
+                                    var deviceuuid = $(this).attr("device-uuid");
+                                    var devicesn = $(this).attr("device-sn");
+                                    var devicename = $(this).attr("device-name");
+                                    var devicerole = $(this).attr("device-role");
+
+                                    if (!devicesn) console.log("Device's SN is not set.");
         
-                        });
+                                    $(".project-device-selector-button .selected-device-name").html(devicename);
+                                    
+                                    self.f.set_state("?p=" + projectid + "&d=" + deviceid);
+        
+                                    $(".devices-list .devices-list-item").removeClass("selected");
+                                    $(this).addClass("selected");
+
+                                    // Hide the  menu
+                                    var $devicesBtn = $(".project-device-selector-button");
+                                    var $deviceMenu = $(".project-device-selector-menu");
+                                    $deviceMenu.hide();
+                                    $(".section-heading").css("filter", "blur(0px)").css("pointer-events", "auto");
+                                    $(".section-parent").css("filter", "blur(0px)").css("pointer-events", "auto");
+        
+                                    // Leave room of the OLD device
+                                    if (self.ls.getItem("state/device/sn")) {
+                                        window.globals.accessors["socket"].publish({
+                                            action: "room/leave",
+                                            payload: self.ls.getItem("state/device/sn")
+                                        });
+                                    }
+        
+                                    // Set selected device to localStorage
+                                    self.ls.setItem("state/device/id", deviceid);
+                                    self.ls.setItem("state/device/uuid", deviceuuid);
+                                    self.ls.setItem("state/device/sn", devicesn);
+                                    self.ls.setItem("state/device/name", devicename);
+                                    self.ls.setItem("state/device/role", devicerole);
+
+                                    // Set device id
+                                    window.globals.constants["device"]["id"] = devicename;
+                                    window.globals.constants["device"]["name"] = devicename;
+                                    window.globals.constants["device"]["uuid"] = deviceuuid;
+                                    window.globals.constants["device"]["type"] = devicetype;
+                                    window.globals.constants["device"]["sn"] = devicesn;
+                
+                                    // Call on_device_selected function
+                                    window.globals.accessors["sites"].on_site_selected(callback);
+        
+                                    //  Recreate chart
+                                    let chart = $("#chart-container").highcharts();
+                                    while(chart && chart.series.length > 0) chart.series[0].remove(true);
+        
+                                    // Get site config data
+                                    window.globals.accessors["sites"].get_site_config_data(deviceid, function() {
+                                        var devicedata = window.globals.data["device"];
+        
+                                        // $(".sites-list").addClass("hidden");
+                                        // $(".sites-info").removeClass("hidden");
+                                        // $(".sites-info .site-name").text(sitename);
+                                        // $(".sites-info .site-id").text(siteid);
+                                        // $(".sites-info .site-address").text(sitedata["ADDRESS"]["LOCATION"]);
+                                        // $(".sites-info .site-installed-on-date").text(sitedata["INSTALLED-ON"]);
+                                    })
+        
+                                });
+            
+                            });
+                        }
 
                         return;
 
@@ -301,22 +324,6 @@ window.globals.apps["projects"] = function () {
                         window.globals.accessors["sites"].on_site_selected(callback);
                     }
                 });
-
-                // var projectids = response.payload;
-                // Object.keys(projectids).forEach(function (projectid, pii) {
-                //     var projectdata = projectids[projectid];
-
-                //     $(".device-menu .projects-list").append(multiline (function () {/* 
-                //         <div class="col-auto projects-list-item ui-truncate" data-b64="{{data-b64}}" project-id="{{project-id}}" project-name="{{project-name}}">
-                //             {{project-name}}
-                //         </div>
-                //     */},
-                //     {
-                //         "data-b64": self.f.json_to_b64(projectdata),
-                //         "project-name": projectdata["NAME"],
-                //         "project-id": projectdata["ID"]
-                //     }));
-                // });
 
                 // If project name requested in the URL
                 if (globals.data["url-params"].has("p")) {

@@ -7,7 +7,6 @@ var global = {
     server: location.protocol + "//" + "sapi.ezbean-lab.com/v3",
     timezone_shift: null,
     polling_frequency: null,
-    distance_from_sensor_to_culver_bottom: 150.41, // Calibrated on July 23rd 16:07:07 (1595534827),
     data: {},
     socket: null
 }
@@ -45,29 +44,62 @@ window.globals = {
     apps: {}
 }
 
-$(document).ready(function () {
+var open_device_menu = function (event) {
+    var $deviceMenu = $(".project-device-selector-menu");
+    $deviceMenu.toggle();
+    $(".project-device-selector-button").removeClass("an-flash");
 
+    if ($deviceMenu.css("display") != "none") {
+        $(".section-heading").css("filter", "blur(8px)").css("pointer-events", "none");
+        $(".section-parent").css("filter", "blur(8px)").css("pointer-events", "none");
+    }
+}
+
+var close_device_menu = function (event) {
+    if (!event) {
+        $deviceMenu.hide();
+        $(".section-heading").css("filter", "blur(0px)").css("pointer-events", "auto");
+        $(".section-parent").css("filter", "blur(0px)").css("pointer-events", "auto");
+        return; 
+    }
     var $devicesBtn = $(".project-device-selector-button");
     var $deviceMenu = $(".project-device-selector-menu");
+    if (!$devicesBtn.is(event.target) && !$deviceMenu.has(event.target).length) {
+        $deviceMenu.hide();
+        $(".section-heading").css("filter", "blur(0px)").css("pointer-events", "auto");
+        $(".section-parent").css("filter", "blur(0px)").css("pointer-events", "auto");
+    }
+}
+
+var close_expanded_menu = function (event) {
+    if (!event) return $('.hover-menu-button').find('.expanded-menu').addClass('hidden');
+    var $clickedElement = $(event.target);
+    if (!$clickedElement.closest('.hover-menu-button').length) {
+        $('.hover-menu-button').find('.expanded-menu').addClass('hidden');
+    }
+}
+
+$(document).ready(function () {
 
     // Toggle the menu on button click
-    $devicesBtn.click(function (event) {
-        event.stopPropagation(); // Prevent the event from reaching the document body
-        $deviceMenu.toggle();
+    $(".project-device-selector-button").click(function (event) {
+        event.stopPropagation();
+        open_device_menu(event);
+    });
 
-        if ($deviceMenu.css("display") != "none") {
-            $(".section-heading").css("filter", "blur(8px)").css("pointer-events", "none");
-            $(".section-parent").css("filter", "blur(8px)").css("pointer-events", "none");
-        }
+    // Toggle the expanded menu visibility on click
+    $('.hover-menu-button').click(function(event) {
+        event.stopPropagation();
+        $(this).find('.expanded-menu').removeClass('hidden');
+
+        $(".section-heading").css("filter", "blur(8px)").css("pointer-events", "none");
+        $(".section-parent").css("filter", "blur(8px)").css("pointer-events", "none");
     });
 
     // Close the menu when clicking outside of it
     $(document).on("click", function (event) {
-        if (!$devicesBtn.is(event.target) && !$deviceMenu.has(event.target).length) {
-            $deviceMenu.hide();
-            $(".section-heading").css("filter", "blur(0px)").css("pointer-events", "auto");
-            $(".section-parent").css("filter", "blur(0px)").css("pointer-events", "auto");
-        }
+        close_device_menu(event);
+        close_expanded_menu(event);
     });
 
     // Set device config items
@@ -98,21 +130,21 @@ $(document).ready(function () {
         }, 200);
     }, 3000);
     
+    // Create a room on server for this web client
     window.globals.accessors["socket"] = new window.globals.apps["socket"]().init(function () {
-        
-        // Create a room on server for this web client
         window.globals.accessors["socket"].publish({
             action: "room/createorjoin",
             payload: window.globals.accessors["socket"].id
         });
     });
+
+    // Init user app
     window.globals.accessors["users"] = new window.globals.apps["users"]().init(function () {
         
         // Create data-fields
         window.globals.accessors["readings"].process_data_fields(function () {
             
             // Create charts/maps
-            
             if (!window.globals.accessors["charts"]) window.globals.accessors["charts"] = new window.globals.apps["charts"]().init();
             if (!window.globals.accessors["maps"]) window.globals.accessors["maps"] = new window.globals.apps["maps"]().init();
 
@@ -121,17 +153,17 @@ $(document).ready(function () {
 
             // Initialize calibration tool
             window.globals.accessors["calibration"].get_calibratable_datafields();
-
         });
-        
     });
+
+    // Initialize command console
     window.globals.accessors["console"] = new window.globals.apps["console"]().init();
 
+    // User activity monitor
     var activity = new activity_watcher(
         function () {
             // Show new data on resumed activity
             console.log("User is active");
-            get_new_data_from_server();
         },
         function () {
             console.log("User is inactive");
@@ -141,12 +173,8 @@ $(document).ready(function () {
         }
     ).run();
 
-    // Set timezone offset in view
-    $("#timezone-hr-shift-text-box").val(parseInt(-1 * (new Date().getTimezoneOffset()) / 60));
-    $("#timezone-min-shift-text-box").val((new Date().getTimezoneOffset()) / 60 % 1 * 60);
-
-    window.globals.variables["tz-offset"] = (parseInt($("#timezone-hr-shift-text-box").val()) * 60 + parseInt($("#timezone-min-shift-text-box").val())) * 60;
-    window.globals.variables["poll-frequency"] = $("#refresh-interval-dropdown-selector").val() * 1000;
+    // Set TZ offset
+    window.globals.variables["tz-offset"] = (parseInt(-1 * (new Date().getTimezoneOffset()) / 60) * 60 + (new Date().getTimezoneOffset()) / 60 % 1 * 60) * 60;
 
     // //! Station activity monitor
     // setInterval(function(){
@@ -160,28 +188,7 @@ $(document).ready(function () {
     //     else if(!$("#station-not-responding-notification").hasClass("hidden")) $("#station-not-responding-notification").addClass("hidden");
     // }, 2000);
     
-    $("#timezone-hr-shift-text-box").change(function(){
-        let chart = $("#chart-container").highcharts();
-        while(chart && chart.series.length > 0) chart.series[0].remove(true);
-        window.globals.variables["tz-offset"] = (parseInt($("#timezone-hr-shift-text-box").val()) * 60 + parseInt($("#timezone-min-shift-text-box").val())) * 60;
-        // create_chart();
-    });
-    $("#timezone-min-shift-text-box").change(function(){
-        let chart = $("#chart-container").highcharts();
-        while(chart && chart.series.length > 0) chart.series[0].remove(true);
-        window.globals.variables["tz-offset"] = (parseInt($("#timezone-hr-shift-text-box").val()) * 60 + parseInt($("#timezone-min-shift-text-box").val())) * 60;
-        // create_chart();
-    });
-
-    $("#y-axis-max-value").change(function(){
-        let max_value = $(this).val();
-        let chart = $("#chart-container").highcharts();
-
-        chart.yAxis[0].update({
-            max: max_value
-        });
-    });
-
+    // Theme selection button listener
     $(".theme-select-button").off("click").click(function () {
         var currstate = $(".theme-select-button").attr("state") || "dark"
         var newstate;
@@ -202,7 +209,7 @@ $(document).ready(function () {
         globals.variables.ls.setItem("/settings/theme", newstate);
     });
 
-
+    // Walkthrough button listener
     $(".start-walkthrough-button").off("click").click(function () {
         let steps = [];
 
@@ -230,8 +237,6 @@ $(document).ready(function () {
             steps.push(element);
         });
 
-        console.log(steps);
-
         const driverObj = driver.js.driver({
             showProgress: true,
             stagePadding: 5,
@@ -241,26 +246,6 @@ $(document).ready(function () {
         driverObj.drive();
     });
 });
-
-// Get new data from the server using a GET request
-function get_new_data_from_server () {
-
-    return;
-
-    if(!window.globals.constants["device"]["id"]) return;
-
-    $.ajax({
-        type: 'GET',
-        url: window.globals.constants["api"] + "/" + window.globals.constants["device"]["type"] + "/data/get?device_id=" + window.globals.constants["device"]["id"] + "&last_data_point_timestamp=" + global.last_data_point_timestamp,
-        success: function(data, textStatus, request){
-            // data = data.replace(/^\s*[\n]/gm, '');
-            // data = Papa.parse(data, {header: true}).data;
-            
-            // if(data.length > 0) draw_new_data_points_on_chart(data);
-        },
-        error: function (request, textStatus, errorThrown) { }
-    });
-}
 
 function filter_outliers(arr) {  
     var values = arr.concat();
@@ -273,3 +258,81 @@ function filter_outliers(arr) {
     var filteredValues = values.filter(function(x) { return (x <= upperlimit) && (x >= lowerlimit); });
     return filteredValues;
 }
+
+function draw() {
+    var r = Raphael("holder", 620, 420), discattr = { fill: "#fff", stroke: "none" };
+    r.rect(0, 0, 619, 419, 10).attr({ stroke: "#666" });
+    r.text(310, 20, "Drag the points to change the curves").attr({ fill: "#fff", "font-size": 16 });
+
+    function curve(x, y, ax, ay, bx, by, zx, zy, color) {
+        var path = [["M", x, y], ["C", ax, ay, bx, by, zx, zy]],
+            path2 = [["M", x, y], ["L", ax, ay], ["M", bx, by], ["L", zx, zy]],
+            curve = r.path(path).attr({ stroke: color || Raphael.getColor(), "stroke-width": 4, "stroke-linecap": "round" }),
+            controls = r.set(
+                r.path(path2).attr({ stroke: "#ccc", "stroke-dasharray": ". " }),
+                r.circle(x, y, 5).attr(discattr),
+                r.circle(ax, ay, 5).attr(discattr),
+                r.circle(bx, by, 5).attr(discattr),
+                r.circle(zx, zy, 5).attr(discattr)
+            );
+        controls[1].update = function (x, y) {
+            var X = this.attr("cx") + x,
+                Y = this.attr("cy") + y;
+            this.attr({ cx: X, cy: Y });
+            path[0][1] = X;
+            path[0][2] = Y;
+            path2[0][1] = X;
+            path2[0][2] = Y;
+            controls[2].update(x, y);
+        };
+        controls[2].update = function (x, y) {
+            var X = this.attr("cx") + x,
+                Y = this.attr("cy") + y;
+            this.attr({ cx: X, cy: Y });
+            path[1][1] = X;
+            path[1][2] = Y;
+            path2[1][1] = X;
+            path2[1][2] = Y;
+            curve.attr({ path: path });
+            controls[0].attr({ path: path2 });
+        };
+        controls[3].update = function (x, y) {
+            var X = this.attr("cx") + x,
+                Y = this.attr("cy") + y;
+            this.attr({ cx: X, cy: Y });
+            path[1][3] = X;
+            path[1][4] = Y;
+            path2[2][1] = X;
+            path2[2][2] = Y;
+            curve.attr({ path: path });
+            controls[0].attr({ path: path2 });
+        };
+        controls[4].update = function (x, y) {
+            var X = this.attr("cx") + x,
+                Y = this.attr("cy") + y;
+            this.attr({ cx: X, cy: Y });
+            path[1][5] = X;
+            path[1][6] = Y;
+            path2[3][1] = X;
+            path2[3][2] = Y;
+            controls[3].update(x, y);
+        };
+        controls.drag(move, up);
+    }
+    function move(dx, dy) {
+        this.update(dx - (this.dx || 0), dy - (this.dy || 0));
+        this.dx = dx;
+        this.dy = dy;
+    }
+    function up() {
+        this.dx = this.dy = 0;
+    }
+
+    curve(70, 100, 110, 100, 130, 200, 170, 200, "hsb(0, .75, .75)");
+    curve(170, 100, 210, 100, 230, 200, 270, 200, "hsb(.8, .75, .75)");
+    curve(270, 100, 310, 100, 330, 200, 370, 200, "hsb(.3, .75, .75)");
+    curve(370, 100, 410, 100, 430, 200, 470, 200, "hsb(.6, .75, .75)");
+    curve(470, 100, 510, 100, 530, 200, 570, 200, "hsb(.1, .75, .75)");
+}
+
+draw();

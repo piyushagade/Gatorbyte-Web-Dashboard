@@ -39,6 +39,9 @@
         
         <!-- PapaParse -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.0.0-beta.0/papaparse.min.js"></script>
+
+        <!-- Popup -->
+        <script type="text/javascript" src="./assets/js/lib/popup.js"></script>
         
         <!-- Noty -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.js"></script>
@@ -50,6 +53,9 @@
 
         <!-- Loading page -->
         <link rel="stylesheet" href="./assets/css/loading.css">
+
+        <!-- HTML popup -->
+        <link rel="stylesheet" href="./assets/css/htmlpopup.css">
 
         <!-- Animate.css -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css">
@@ -80,6 +86,7 @@
         <script src="./assets/js/leaflet.hotline.js"></script>
         <script src="./assets/js/leaflet-gesture-handling.min.js"></script>
         
+        <script src="./assets/js/lib/waterfall.js"></script>
 
         <!-- Codemirror -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css" crossorigin="anonymous">
@@ -96,7 +103,36 @@
         <!-- Multiline -->
         <script type="text/javascript" src="./assets/js/lib/multiline.js"></script>
 
-        <title>UF - GatorByte</title>
+        <!-- D3.js -->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js'></script>
+        
+        <!-- Load Raphael -->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.js'></script>
+        
+        <!-- Load Snap.svg (built on top of Raphael) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.5.1/snap.svg-min.js"></script>
+
+        <!-- Animate.css -->
+        <link rel="stylesheet" href="./assets/css/animate.css"/>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.49.0/min/vs/loader.min.js"></script>
+
+        <script>
+            // Proxy Monaco Editor workers using a data URL
+            require.config({ paths: { "vs": "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs/" }});
+            
+            window.MonacoEnvironment = {
+                getWorkerUrl: function(workerId, label) {
+                    return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+                        self.MonacoEnvironment = { baseUrl: "https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/" };
+                        importScripts("https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.29.1/min/vs/base/worker/workerMain.min.js");`
+                    )}`;
+                }
+            };
+            
+            </script>
+
+        <title>GatorByte</title>
 
 
     </head>
@@ -175,10 +211,12 @@
                         </div>
                         
                         <!-- Devices -->
-                        <div id="devicesBtn" class="col-auto project-device-selector-button settings-menu-item shadow-light" style="padding: 4px 10px; cursor: pointer; border-radius: 16px; width: auto;margin-right: 8px; margin-bottom: 8px;">
+                        <div id="devicesBtn" class="col-auto project-device-selector-button settings-menu-item shadow-light an an-repeat-2 an-slow" style="padding: 4px 10px; cursor: pointer; border-radius: 16px; width: auto;margin-right: 8px; margin-bottom: 8px;">
                             <i class="fa-solid fa-sitemap" style="margin-right: 4px;"></i>
                             <span class="selected-device-name" style="font-size: 13px;">No device selected</span>
                         </div>
+
+                        <!-- Device menu -->
                         <div class="device-menu project-device-selector-menu menu shadow-heavy container" style="max-width: 400px;width: 86vw;margin-top: 12px;border-radius: 16px;display: none;">
                             <div class="row">
                                 <div class="col-4" style=" border-right: 2px solid #ffffff29; padding-right: 8px;">
@@ -187,7 +225,10 @@
                                 </div>
                                 <div class="col">
                                     <p style="margin-bottom: 8px; font-size: 16px;">Devices</p>
-                                    <div class="devices-list row scrollbar-style" style="margin: 0; overflow-y: auto; max-height: 300px; display: inline-flex;width: 100%;overflow-x: auto;"></div>
+                                    <div class="devices-list row scrollbar-style" style="margin: 0; overflow-y: auto; max-height: 300px; display: inline-flex;width: 100%;overflow-x: auto;">
+                                        <div class="empty-notification hidden" style="font-size: 13px;">This project has no devices that you have access to.</div>
+                                        <div class="project-not-selected-notification" style="font-size: 13px;">Select a project first.</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -198,10 +239,23 @@
                             <span class="text" style="font-size: 13px;">Configure</span>
                         </div>
                         
-                        <!-- Add a user -->
-                        <div class="col-auto add-user-button settings-menu-item requires-login requires-project-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
-                            <i class="fa-solid fa-user-plus" style=" font-size: 13px; margin-right: 4px;"></i>
-                            <span class="text" style="font-size: 13px;">Add user</span>
+                        <!-- Users -->
+                        <div class="col-auto hover-menu-button users-menu-button settings-menu-item requires-login requires-project-super shadow-light hidden">
+                            <i class="fas fa-user" style=" font-size: 13px; margin-right: 4px;"></i>
+                            <span class="text" style="font-size: 13px;">Users</span>
+                            <i class="fas fa-angle-down" style="font-size: 10px; margin-left: 4px; opacity: 0.75;"></i>
+
+                            <div class="row expanded-menu shadow-heavy hidden">
+                                <div class="col-12 expanded-menu-item add-user-button">
+                                    <i class="fa-solid fa-user-plus" style=" font-size: 13px; margin-right: 4px;"></i>
+                                    <span class="text" style="font-size: 13px;">Add user</span>
+                                </div>
+                                
+                                <div class="col-12 expanded-menu-item">
+                                    <i class="fas fa-list" style=" font-size: 13px; margin-right: 4px;"></i>
+                                    <span class="text" style="font-size: 13px;">List</span>
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- Add a project -->
@@ -240,45 +294,45 @@
                     <div class="notification-parent-ui">
 
                         <!-- Login notification -->
-                        <div class="row">
-                            <div id="login-notification" class="col-auto shadow hidden no-login-notification" style="background: #2a5661; color: #e0e0e0; margin-top: 16px;margin-bottom: 16px;padding: 12px 16px;border-radius: 17px;">
+                        <div class="row hidden no-login-notification">
+                            <div id="login-notification" class="col-auto shadow" style="background: #2a5661; color: #e0e0e0; margin-top: 16px;margin-bottom: 16px;padding: 12px 16px;border-radius: 17px;">
                                 Please login using your credentials to see the monitoring data.
                             </div>
                         </div>
 
                         <!-- User inactivity -->
-                        <div class="row">
-                            <div id="user-inactive-notification" class="col-auto shadow hidden" style="background: rgb(248, 210, 38); color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
+                        <div id="user-inactive-notification" class="row hidden">
+                            <div class="col-auto shadow" style="background: rgb(248, 210, 38); color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
                                 You have been inactive for over 3 minutes. So, the chart updates have been paused.
                             </div>
                         </div>
 
                         <!-- No response -->
-                        <div class="row">
-                            <div id="station-not-responding-notification" class="col-auto shadow hidden" style="background: rgb(248, 112, 112); color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
+                        <div id="station-not-responding-notification" class="row hidden">
+                            <div class="col-auto shadow" style="background: rgb(248, 112, 112); color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
                                 The site/device has not been active since <span class="date-area">-</span>
                             </div>
                         </div>
 
                         <!-- Safe mode -->
-                        <div class="row">
-                            <div id="station-safe-mode-notification" class="col-auto shadow hidden" style="background: rgb(171, 112, 248); color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
+                        <div id="station-safe-mode-notification" class="row hidden">
+                            <div class="col-auto shadow" style="background: rgb(171, 112, 248); color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
                                 The device is in Safe Mode. Data collection is paused.
                             </div>
                         </div>
 
                         <!-- No site selected -->
-                        <div class="row" style="margin-bottom: 20px;">
-                            <div class="col-auto shadow hidden no-site-selected-notification" style="background: #0d426f; color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
+                        <div id="startDiv" class="row hidden no-site-selected-notification" style="margin-bottom: 20px;">
+                            <div class="col-auto shadow" style="background: #0d426f; color: #e0e0e0; margin-top: 16px; margin-bottom: 16px; padding: 12px 16px; border-radius: 17px;">
                                 Please select a site using the <i class="fa-solid fa-sitemap" style="margin: 0 8px;"></i> button above.
                             </div>
                         </div>
                     </div>
 
-                    <div class="dashboard-ui">
+                    <div class="dashboard-ui" style="margin-top: 20px;">
 
                         <!-- Data summary fields -->
-                        <div class="data-summary-fields-list hidden" style="margin-bottom: 20px;">
+                        <div class="section-parent data-summary-fields-list hidden" style="margin-bottom: 20px;">
                             <div class="row">
                                 <div class="col-12 section-heading" style="font-size: 15px; padding: 0;">
                                     Latest sensor readings <span style="color: #999; font-size: 12px;">(Last updated:</span> <span class="last-update-timestamp" style="color: #999; font-size: 12px;"></span><span style="color: #999; font-size: 12px;">)</span>
@@ -437,18 +491,20 @@
                         </div>
                     </div>
                 </main>
+
+                <div id="holder" class="hidden" style="position: absolute; top: 0; bottom: 0; left: 0; right: 0; border: 1px solid red;"></div>
             </div>
             
         </div>
 
         <!-- !Open html slidein modal -->
-        <div class="ui-container html-slidein-ui hidden" style="height: 100%;width: 100%;margin: 0;padding: 20px;background: #7896b552;backdrop-filter: blur(14px);top: 0;position: absolute; z-index: 100000;">
-            <div class="content" style="color: #FFFFFFbb; padding: 10px; width: 98%; min-height: 90%; position: absolute; bottom: -8px;">
-                <div class="html-placeholder shadow scrollbar-style" style="margin: auto;max-height: 96%;max-width: 90vw;background: rgba(255, 255, 255, 0.882);border-radius: 0px;min-width: 150px;min-height: 100px;backdrop-filter: blur(3px);padding: 20px 36px;color: rgb(34, 34, 34);overflow: hidden auto;width: 90%;height: 90vh;border-top-left-radius: 20px;border-top-right-radius: 20px;"></div>
+        <div class="ui-container html-slidein-ui hidden" style="height: 100%;width: 100%;margin: 0;padding: 10px;background: #7896b552;backdrop-filter: blur(14px);top: 0;position: absolute; z-index: 100000;">
+            <div class="content" style="color: #FFFFFFbb; padding: 10px; min-height: 90%; position: absolute; bottom: 0px; top: 0; right: 0; left: 0;">
+                <div class="html-placeholder shadow scrollbar-style" style="margin: auto; background: rgba(255, 255, 255, 0.882); border-radius: 0px; min-width: 150px; min-height: 100px; backdrop-filter: blur(3px); padding: 10px 16px; color: rgb(34, 34, 34); overflow: hidden auto;  border-radius: 20px;"></div>
             </div>
             
             <!-- Control buttons -->
-            <div class="circle-button" style="transform: scale(0.8); cursor: pointer;position: absolute; top: 18px; right: 24px; display: inline-flex; border-radius: 40px;padding: 4px;">
+            <div class="circle-button hidden" style="transform: scale(0.8); cursor: pointer;position: absolute; top: 18px; right: 24px; display: inline-flex; border-radius: 40px;padding: 4px;">
                 <div class="modal-close-button" style="cursor: pointer; height: 49px; width: 49px;">
                     <i class="fas fa-times" style="color: #212121;font-size: 37px;margin-top: 8px;margin-left: 12px; opacity: 0.4;"></i>
                 </div>
@@ -469,7 +525,6 @@
         <script type="text/javascript" src="./assets/js/console.js"></script>
         <script type="text/javascript" src="./assets/js/projects.js"></script>
         <script type="text/javascript" src="./assets/js/sites.js"></script>
-        <script type="text/javascript" src="./assets/js/htmlpopup.js"></script>
         <script type="text/javascript" src="./assets/js/htmlslidein.js"></script>
         <script type="text/javascript" src="./assets/js/users.js"></script>
         <script type="text/javascript" src="./assets/js/calibration.js"></script>

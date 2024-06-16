@@ -101,13 +101,26 @@ window.globals.apps["charts"] = function () {
             var min = parseInt(self.ls.getConfig({ category: chart_name + "-" + "chart", key: "y-min" }));
             var max = parseInt(self.ls.getConfig({ category: chart_name + "-" + "chart", key: "y-max" }));
 
+            // Get style data
+            var color = df.CHART.STYLE && df.CHART.STYLE.COLOR ? df.CHART.STYLE.COLOR : null;
+
+            // if (df.FUNCTIONS && df.FUNCTIONS.ONDATA) {
+
+            //     var ondata = eval (df.FUNCTIONS.ONDATA);
+            //     window.globals.data["data-fields-readings-formatted"][chart_name].forEach(function (row, ri) {
+            //         ondata(row);
+            //     });
+            // }
+
             //! Add GatorByte data
             var seriesdata = [{
                 name: series_name,
                 data: window.globals.data["data-fields-readings-formatted"][chart_name] || [],
                 yAxis: 0,
-                gapSize: 3600000, // 1 hour gap
-                gapUnit: "value"
+                color: color,
+                gapSize: df.CHART.GAPSIZE || 3600000, // 1 hour gap
+                gapUnit: "value",
+                // zones: df.CHART.ZONES || null
             }];
 
             //! Add reference data if available
@@ -422,13 +435,17 @@ window.globals.apps["charts"] = function () {
                 });
             }
 
+            // Get style data
+            var color = df.CHART.STYLE && df.CHART.STYLE.COLOR ? df.CHART.STYLE.COLOR : null;
+
             //! Add GatorByte data
             var seriesdata = [{
                 name: series_name,
                 data: data_array,
                 yAxis: 0,
-                gapSize: 3600000, // 1 hour gap
-                gapUnit: "value"
+                gapSize: df.CHART.GAPSIZE || 3600000, // 1 hour gap
+                gapUnit: "value",
+                color: color
             }];
 
             //! Add reference data if available
@@ -1106,12 +1123,10 @@ window.globals.apps["charts"] = function () {
 
     self.showexternaltooltip = function (args) {
 
-        var html = multiline(function () {/* 
-            <div class="external-chart-tooltip-parent shadow" style="position: absolute;bottom: 20px;left: 20px;background: white;padding: 6px 6px; z-index: 1000;"></div>
-        */})
-
         $("body").find(".external-chart-tooltip-parent").remove();
-        $("body").append(html);
+        $("body").append(multiline(function () {/* 
+            <div class="external-chart-tooltip-parent shadow"></div>
+        */}));
         $("body").find(".external-chart-tooltip-parent").html(args.html);
     }
 }
