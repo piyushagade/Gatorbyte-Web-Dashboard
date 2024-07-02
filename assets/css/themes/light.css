@@ -418,3 +418,31 @@ body.light .external-chart-tooltip-parent {
     padding: 10px; 
     z-index: 1000;
 }
+
+.chart-point-popup {
+    background: #20282dd9;
+    color: #c9c9c9;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
+    position: absolute; 
+    z-index: 1000;
+    height: 35px; 
+    min-width: 50px; 
+    border-radius: 10px;
+    box-shadow: 0 4px 14px rgba(184, 184, 184, 0.4) !important;
+}
+
+.chart-point-popup .item {
+    cursor: pointer; 
+    height: 25px; 
+    width: 25px; 
+    background: #595959; 
+    padding: 7px 6px;
+    border-radius: 8px;
+    margin-right: 5px;
+}
+
+.chart-point-popup .item:last-child {
+    margin-right: 0px;
+}

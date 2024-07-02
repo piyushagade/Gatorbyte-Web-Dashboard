@@ -68,6 +68,9 @@ window.globals.apps["readings"] = function () {
         // Order the data fields
         window.globals.data["data-fields"] = window.globals.data["data-fields"].sort(function (a, b) { return a["ORDER"] < b["ORDER"] ? - 1 : 1; });
 
+        var invalidtimestamprows = [];
+        var datapointscount = {};
+        
         window.globals.data["data-fields"].forEach(function (df, di) {
             
             var datasource = df["SOURCE"] && df["SOURCE"]["TYPE"] ? df["SOURCE"]["TYPE"] : "gatorbyte"; 
@@ -116,67 +119,77 @@ window.globals.apps["readings"] = function () {
                 ! Construct data sourced from the GatorByte device
             */
             if (datasource == "gatorbyte") {
+
                 window.globals.data["data-fields-readings"].forEach(function (row, ri) {
                     if (!window.globals.data["data-fields-readings-formatted"][df.ID]) window.globals.data["data-fields-readings-formatted"][df.ID] = [];
 
-                    if (df.CHART) {
-
-                        var value = parseFloat(row[df.ID]);
-                        window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row.TIMESTAMP) * 1000 - parseInt(window.globals.variables["tz-offset"]) * 0, value]);
-                        
-                        // Is hvalue reference value?
-                        var hvalue = parseFloat("H" + row[df.ID]);
-                        if (!isNaN(hvalue)) window.globals.data["data-fields-readings-formatted"]["H" + df.ID].push([parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0, hvalue]);
-
+                    // Filter invalid timestamp rows
+                    if (row.TIMESTAMP < 1000000000) {
+                        invalidtimestamprows.push(row);
                     }
-                    else if (df.MAP) {
-                        window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row.TIMESTAMP), parseFloat(row["LAT"]), parseFloat(row["LNG"])]);
-                    }
-                    
-                    if (df.QUICKVIEW) { 
 
-                        if (df.ID == "GPS") {
-                            // Set the data summary field with the latest data
-                            if (ri >= window.globals.data["data-fields-readings"].length - 1 - 20) {
+                    else {
+                        if (df.CHART) {
 
-                                setTimeout(() => {
-                                    if (row["LAT"] == 0 || row["LNG"] == 0) return;
-                                    $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(row["LAT"] + "," + row["LNG"]).css("cursor", "pointer").off("click").click(function () {
-
-                                        $("<a class='temp-url'>").prop({
-                                            target: "_map",
-                                            // href: 'https://www.latlong.net/c/?lat=' + row["LAT"] + '&long=' + row["LNG"]
-                                            // href: 'https://latitude.to/lat/' + row["LAT"] + '/lng/' + row["LNG"]
-                                            href: "https://www.google.com/maps/place/" + row["LAT"] + "," + row["LNG"]
-                                        })[0].click().remove();
-                                    });
-                                }, 100);
-                            }
-                        }
-
-                        else {
+                            if (!datapointscount[df.ID]) datapointscount[df.ID] = 0;
+                            datapointscount[df.ID] += 1;
 
                             var value = parseFloat(row[df.ID]);
-                            window.globals.data["data-fields-readings-formatted"][df.ID].push([(parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0) * 1000, value]);
+                            window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row.TIMESTAMP) * 1000 - parseInt(window.globals.variables["tz-offset"]) * 0, value]);
                             
-                            // Set the data summary field with the latest data
-                            if (ri == window.globals.data["data-fields-readings"].length - 1) {
-                                setTimeout(() => {
+                            // Is hvalue reference value?
+                            var hvalue = parseFloat("H" + row[df.ID]);
+                            if (!isNaN(hvalue)) window.globals.data["data-fields-readings-formatted"]["H" + df.ID].push([parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0, hvalue]);
 
-                                    var formattedvalue = value.toFixed(2);
-                                    var format = df.QUICKVIEW && df.QUICKVIEW["TYPE"] ? df.QUICKVIEW["TYPE"] : "float";
+                        }
+                        else if (df.MAP) {
+                            window.globals.data["data-fields-readings-formatted"][df.ID].push([parseInt(row.TIMESTAMP), parseFloat(row["LAT"]), parseFloat(row["LNG"])]);
+                        }
+                        if (df.QUICKVIEW) { 
 
-                                    if (df.QUICKVIEW && df.QUICKVIEW["TYPE"] == "integer") {
-                                        formattedvalue = parseInt(value);
-                                    }
-                                    else if (df.QUICKVIEW && df.QUICKVIEW["TYPE"] == "float") {
-                                        formattedvalue = value.toFixed(df.QUICKVIEW["PRECISION"] ? df.QUICKVIEW["PRECISION"] : 2);
-                                    }
+                            if (df.ID == "GPS") {
+                                // Set the data summary field with the latest data
+                                if (ri >= window.globals.data["data-fields-readings"].length - 1 - 20) {
 
-                                    $(".data-summary-fields-list").removeClass("hidden");
-                                    $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(value && !isNaN(formattedvalue) ? formattedvalue : "-");
-                                    $(".data-summary-fields-list .last-update-timestamp").html(moment((parseInt(row.TIMESTAMP)) * 1000).format("LLL"));
-                                }, 100);
+                                    setTimeout(() => {
+                                        if (row["LAT"] == 0 || row["LNG"] == 0) return;
+                                        $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(row["LAT"] + "," + row["LNG"]).css("cursor", "pointer").off("click").click(function () {
+
+                                            $("<a class='temp-url'>").prop({
+                                                target: "_map",
+                                                // href: 'https://www.latlong.net/c/?lat=' + row["LAT"] + '&long=' + row["LNG"]
+                                                // href: 'https://latitude.to/lat/' + row["LAT"] + '/lng/' + row["LNG"]
+                                                href: "https://www.google.com/maps/place/" + row["LAT"] + "," + row["LNG"]
+                                            })[0].click().remove();
+                                        });
+                                    }, 100);
+                                }
+                            }
+
+                            else {
+
+                                var value = parseFloat(row[df.ID]);
+                                window.globals.data["data-fields-readings-formatted"][df.ID].push([(parseInt(row.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0) * 1000, value]);
+                                
+                                // Set the data summary field with the latest data
+                                if (ri == window.globals.data["data-fields-readings"].length - 1) {
+                                    setTimeout(() => {
+
+                                        var formattedvalue = value.toFixed(2);
+                                        var format = df.QUICKVIEW && df.QUICKVIEW["TYPE"] ? df.QUICKVIEW["TYPE"] : "float";
+
+                                        if (df.QUICKVIEW && df.QUICKVIEW["TYPE"] == "integer") {
+                                            formattedvalue = parseInt(value);
+                                        }
+                                        else if (df.QUICKVIEW && df.QUICKVIEW["TYPE"] == "float") {
+                                            formattedvalue = value.toFixed(df.QUICKVIEW["PRECISION"] ? df.QUICKVIEW["PRECISION"] : 2);
+                                        }
+
+                                        $(".data-summary-fields-list").removeClass("hidden");
+                                        $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(value && !isNaN(formattedvalue) ? formattedvalue : "-");
+                                        $(".data-summary-fields-list .last-update-timestamp").html(moment((parseInt(row.TIMESTAMP)) * 1000).format("LLL"));
+                                    }, 100);
+                                }
                             }
                         }
                     }
@@ -744,6 +757,7 @@ window.globals.apps["readings"] = function () {
                                                     window.globals.accessors["charts"].showexternaltooltip({
                                                         html: html
                                                     });
+                                                    
                                                 },
                                                 mouseOver: function (e) {
 
@@ -867,6 +881,14 @@ window.globals.apps["readings"] = function () {
             });
 
         });
+
+        console.log("Data point count:");
+        console.log(datapointscount);
+        
+        if (invalidtimestamprows.length > 0) {
+            console.log("Invalid timestamp rows detected");
+            console.log(invalidtimestamprows);
+        }
 
         // Initialize map
         if (!window.globals.accessors["maps"]) window.globals.accessors["maps"] = new window.globals.apps["maps"]().init();

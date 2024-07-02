@@ -1,6 +1,6 @@
 /* @import url('https://unpkg.com/css.gg@2.0.0/icons/css/check.css'); */
 
-.popup-container {
+.popup-container:first {
     pointer-events: all;
     height: 100%;
     width: 100%;
@@ -11,6 +11,10 @@
     position: absolute;
     z-index: 1000000;
     overflow-y: hidden;
+}
+
+.popup-container:not(:first) {
+    background: transparent;
 }
 
 .popup-container .body p {

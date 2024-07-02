@@ -353,6 +353,7 @@ window.globals.apps["charts"] = function () {
                                     self.showexternaltooltip({
                                         html: html
                                     });
+
                                 },
                                 mouseOver: function (e) {
 
@@ -794,6 +795,12 @@ window.globals.apps["charts"] = function () {
                                     self.showexternaltooltip({
                                         html: html
                                     });
+
+                                    self.showchartpointoptions({
+                                        e: e,
+                                        that: this,
+                                        chart_name: chart_name
+                                    })
                                 },
                                 mouseOver: function (e) {
 
@@ -1128,6 +1135,157 @@ window.globals.apps["charts"] = function () {
             <div class="external-chart-tooltip-parent shadow"></div>
         */}));
         $("body").find(".external-chart-tooltip-parent").html(args.html);
+    }
+
+    self.showchartpointoptions = function (args) {
+
+        var e = args.e;
+        var that = args.that;
+        var chart_name = args.chart_name;
+
+        // Get the cursor position
+        var cursorX = e.chartX + 50
+        var cursorY = e.chartY - 110;
+        var pageX = e.pageX;
+        var pageY = e.pageY;
+
+        Mousetrap.unbind(['d']);
+        Mousetrap.unbind(['r']);
+        Mousetrap.unbind(['p']);
+        $(".chart-point-popup").remove();
+
+        var pointdata = {
+            color: that.color,
+            index: that.index,
+            plotX: that.plotX,
+            plotY: that.plotY,
+            pageX: e.pageX,
+            pageY: e.pageY,
+            x: that.x,
+            y: that.y,
+            "chart-id": that.id,
+            "chart-name": chart_name + "-line-chart"
+        }
+
+        // Create the popup
+        var popup = $('<div/>', {
+            class: 'chart-point-popup shadow-heavy',
+            html: multiline(function () {/* 
+                
+                <div class="row" data-b64="{{data-b64}}"" style="margin: 0; padding: 5px;">
+                    
+                    <!-- Mark as an outlier -->
+                    <div class="col-auto item add-outlier-button" title="Mark as outlier (Key: d)">
+                        <i class="fas fa-chart-line" style=" font-size: 13px; margin-right: 4px;"></i>
+                    </div>
+                    
+                    <!-- Add plot line -->
+                    <div class="col-auto item add-plotline-button" title="Add plotline (Key: p)">
+                        <i class="fas fa-minus" style=" font-size: 13px; margin-right: 4px; transform: rotate(90deg);"></i>
+                    </div>
+                    
+                    <!-- Add plot line -->
+                    <div class="col-auto item add-plotline-button" title="Replace with an interpolation (Key: r)">
+                        <i class="fas fa-reply-all" style=" font-size: 13px; margin-right: 4px;"></i>
+                    </div>
+                </div>
+            */}, {
+                "data-b64": self.f.json_to_b64(pointdata)
+            })
+        });
+
+        // Append the popup to the body and position it
+        $("#" + chart_name + "-line-chart").append(popup);
+
+        if (cursorX <= popup.width() + 50) cursorX += 50;
+        if (cursorY <= popup.height() + 50) cursorY += 50;
+        if (pageX - cursorX <= popup.width() + 50) cursorX -= popup.width() + 30;
+        if (pageY - cursorY <= popup.height()) cursorY -= popup.height();
+        
+        popup.css({
+            left: cursorX + 'px',
+            top: cursorY + 'px'
+        });
+
+        self.registerchartpointoptionslistener();
+    } 
+
+    self.registerchartpointoptionslistener = function () {
+
+        Mousetrap.bind(['d'], function (e) {
+            e.preventDefault();
+            $(".chart-point-popup").find(".add-outlier-button").click();
+            return false;
+        });
+
+        $(".chart-point-popup").find(".add-outlier-button").off("click").click(function () {
+            var data = self.f.b64_to_json($(this).parent().attr("data-b64"));
+
+            removeoutlier();
+            function removeoutlier () {
+                var chartInstance = Highcharts.charts.find(chart => {
+                    if (chart) return chart.renderTo.id === data["chart-name"];
+                });
+                
+                if (chartInstance) {
+                    var series = chartInstance.series[0];
+
+                    // Original data array
+                    var alldata = series.options.data;
+
+                    // // Filter out the data point
+                    // alldata.forEach(function(point, index) {
+                    //     if (point[0] == data.x) {
+                    //         point[1] = null;
+                    //     }
+                    // });
+
+                    // // Update the series data
+                    // series.update({data: alldata});
+
+                    var points = series.data.filter(function(point) {
+                        return point.x == data.x;
+                    });
+
+                    if (points) {
+
+                        // Change the color of the data point
+                        points[0].color = '#FF0000';
+                        
+                        series.chart.xAxis[0].addPlotLine({
+                            id: "outlier-" + points[0].x,
+                            value: points[0].x,
+                            color: 'red',
+                            lineWidth: 1,
+                            zIndex: 0
+                        });
+
+                    } else {
+                        console.log("Point not found");
+                    }
+
+                    // Hide the chart point popup
+                    $(".chart-point-popup").remove();
+                    Mousetrap.unbind(['r']);
+
+                    // Update the data on the server
+                    $.ajax({
+                        type: 'POST',
+                        data: JSON.stringify({
+                            "device-sn": self.ls.getItem("state/device/sn"),
+                            "device-id": self.ls.getItem("state/device/id"),
+                            "project-id": self.ls.getItem("state/project/id"),
+                            "timestamp": moment.now(),
+                        }),
+                        url: self.f.url({ path: "/data/outlier/new" }),
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function (request, textStatus, errorThrown) { }
+                    });
+                }
+            }
+        });
     }
 }
 

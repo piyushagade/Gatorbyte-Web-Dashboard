@@ -45,6 +45,9 @@ window.globals = {
 }
 
 var open_device_menu = function (event) {
+    close_device_menu();
+    close_expanded_menu();
+
     var $deviceMenu = $(".project-device-selector-menu");
     $deviceMenu.toggle();
     $(".project-device-selector-button").removeClass("an-flash");
@@ -56,15 +59,15 @@ var open_device_menu = function (event) {
 }
 
 var close_device_menu = function (event) {
+    var $devicesBtn = $(".project-device-selector-button");
+    var $deviceMenu = $(".project-device-selector-menu");
     if (!event) {
-        $deviceMenu.hide();
+        if ($deviceMenu) $deviceMenu.hide();
         $(".section-heading").css("filter", "blur(0px)").css("pointer-events", "auto");
         $(".section-parent").css("filter", "blur(0px)").css("pointer-events", "auto");
         return; 
     }
-    var $devicesBtn = $(".project-device-selector-button");
-    var $deviceMenu = $(".project-device-selector-menu");
-    if (!$devicesBtn.is(event.target) && !$deviceMenu.has(event.target).length) {
+    if ($deviceMenu && !$devicesBtn.is(event.target) && !$deviceMenu.has(event.target).length) {
         $deviceMenu.hide();
         $(".section-heading").css("filter", "blur(0px)").css("pointer-events", "auto");
         $(".section-parent").css("filter", "blur(0px)").css("pointer-events", "auto");
@@ -90,6 +93,10 @@ $(document).ready(function () {
     // Toggle the expanded menu visibility on click
     $('.hover-menu-button').click(function(event) {
         event.stopPropagation();
+        
+        close_device_menu();
+        close_expanded_menu();
+        
         $(this).find('.expanded-menu').removeClass('hidden');
 
         $(".section-heading").css("filter", "blur(8px)").css("pointer-events", "none");

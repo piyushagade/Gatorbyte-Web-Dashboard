@@ -234,14 +234,30 @@ function functions_subapp(){
 
         if (blocking) {
             $(".popup-ui").css({
-                "background": "rgba(40, 40, 40, 0.98)",
+                "background": "transparent",
                 "pointer-events": "auto"
             });
+            $(".popup-ui").off("click");
+            $(".popup-ui .popup-container").off("click");
         }
         else {
             $(".popup-ui").css({
                 "background": "transparent",
                 "pointer-events": "none"
+            });
+            
+            $(".popup-ui").off("click").click(function () {
+            
+                $(".popup-ui").addClass("hidden");
+                $(".popup-ui .popup-text").html("");
+                $(".popup-ui .popup-okay-button").off("click");
+                $(".popup-ui .popup-cancel-button").off("click");
+    
+                if(failure && typeof failure == "function") failure();
+            });
+    
+            $(".popup-ui .popup-container").off("click").click(function (e) {
+                e.stopPropagation();
             });
         }
 

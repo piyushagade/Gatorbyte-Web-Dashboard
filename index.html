@@ -42,6 +42,10 @@
 
         <!-- Popup -->
         <script type="text/javascript" src="./assets/js/lib/popup.js"></script>
+
+        <!-- Datatable -->
+        <script type="text/javascript" src="https://api.piyushagade.xyz/v1/cdn/get/js/datatable.js"></script>
+        <link rel="stylesheet" href="https://api.piyushagade.xyz/v1/cdn/get/css/datatable.css">
         
         <!-- Noty -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/noty/3.1.4/noty.js"></script>
@@ -115,6 +119,10 @@
         <!-- Animate.css -->
         <link rel="stylesheet" href="./assets/css/animate.css"/>
 
+        <!-- Crossfilter.js -->
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.12/crossfilter.min.js'></script>
+
+        <!-- Monaco editor -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.49.0/min/vs/loader.min.js"></script>
 
         <script>
@@ -130,7 +138,7 @@
                 }
             };
             
-            </script>
+        </script>
 
         <title>GatorByte</title>
 
@@ -214,6 +222,7 @@
                         <div id="devicesBtn" class="col-auto project-device-selector-button settings-menu-item shadow-light an an-repeat-2 an-slow" style="padding: 4px 10px; cursor: pointer; border-radius: 16px; width: auto;margin-right: 8px; margin-bottom: 8px;">
                             <i class="fa-solid fa-sitemap" style="margin-right: 4px;"></i>
                             <span class="selected-device-name" style="font-size: 13px;">No device selected</span>
+                            <i class="fas fa-angle-down" style="font-size: 10px; margin-left: 4px; opacity: 0.75;"></i>
                         </div>
 
                         <!-- Device menu -->
@@ -233,7 +242,13 @@
                             </div>
                         </div>
                         
-                        <!-- Site configuration -->
+                        <!-- Add a device -->
+                        <div class="col-auto add-device-button settings-menu-item requires-login requires-device-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                            <i class="fa-solid fa-microchip" style=" font-size: 13px; margin-right: 4px;"></i>
+                            <span class="text" style="font-size: 13px;">Add device</span>
+                        </div>
+                        
+                        <!-- Device configuration -->
                         <div class="col-auto show-hide-config-button settings-menu-item requires-login requires-device-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
                             <i class="fa-solid fa-screwdriver-wrench" style=" font-size: 13px; margin-right: 4px;"></i>
                             <span class="text" style="font-size: 13px;">Configure</span>
@@ -251,29 +266,30 @@
                                     <span class="text" style="font-size: 13px;">Add user</span>
                                 </div>
                                 
-                                <div class="col-12 expanded-menu-item">
+                                <div class="col-12 expanded-menu-item list-users-button">
                                     <i class="fas fa-list" style=" font-size: 13px; margin-right: 4px;"></i>
                                     <span class="text" style="font-size: 13px;">List</span>
                                 </div>
                             </div>
                         </div>
                         
-                        <!-- Add a project -->
-                        <div class="col-auto add-project-button settings-menu-item requires-login requires-project-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
-                            <i class="fa-solid fa-plus" style=" font-size: 13px; margin-right: 4px;"></i>
-                            <span class="text" style="font-size: 13px;">Add project</span>
-                        </div>
-                        
-                        <!-- Manage projects -->
-                        <div class="col-auto manage-projects-button settings-menu-item requires-login requires-project-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
+                        <!-- Projects -->
+                        <div class="col-auto hover-menu-button users-menu-button settings-menu-item requires-login requires-project-super shadow-light hidden">
                             <i class="fas fa-paperclip" style=" font-size: 13px; margin-right: 4px;"></i>
-                            <span class="text" style="font-size: 13px;">Manage projects</span>
-                        </div>
-                        
-                        <!-- Add a device -->
-                        <div class="col-auto add-device-button settings-menu-item requires-login requires-device-super shadow-light hidden" style="min-width: 32px; padding: 4px 10px;cursor: pointer; border-radius: 16px;width: auto;margin-right: 8px; margin-bottom: 8px;">
-                            <i class="fa-solid fa-microchip" style=" font-size: 13px; margin-right: 4px;"></i>
-                            <span class="text" style="font-size: 13px;">Add device</span>
+                            <span class="text" style="font-size: 13px;">Projects</span>
+                            <i class="fas fa-angle-down" style="font-size: 10px; margin-left: 4px; opacity: 0.75;"></i>
+
+                            <div class="row expanded-menu shadow-heavy hidden">
+                                <div class="col-12 expanded-menu-item add-project-button">
+                                    <i class="fa-solid fa-plus" style=" font-size: 13px; margin-right: 4px;"></i>
+                                    <span class="text" style="font-size: 13px;">Add project</span>
+                                </div>
+                                
+                                <div class="col-12 expanded-menu-item manage-projects-button">
+                                    <i class="fas fa-list" style=" font-size: 13px; margin-right: 4px;"></i>
+                                    <span class="text" style="font-size: 13px;">List</span>
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- Theme -->
@@ -511,6 +527,20 @@
             </div>
         </div>
 
+        <!-- !Popup message ui -->
+        <div class="ui-container popup-ui hidden" style="z-index: 10000;position: absolute;inset: 0px;margin: 0px;padding: 24px 22px;backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); pointer-events: auto;">
+            <div class="absolute-center shadow-heavy" style="padding: 14px 20px; min-height: 50px; min-width: 280px; background: rgba(240, 240, 240, 0.98); border-radius: 4px;">
+                <div class="popup-text" style="color: #222; min-height: 30px; min-width: 120px;">-</div>
+                <div class="popup-action-buttons"
+                    style="display: inline-flex; border-top: 1px solid #CCC; padding-top: 12px; margin-top: 10px; width: 100%;">
+                    <button class="popup-okay-button ui-btn-1 shadow"
+                        style="margin: 0; margin-right: 10px; background:#72A554; color: #FFF;">Okay</button>
+                    <button class="popup-cancel-button hidden ui-btn-1 shadow"
+                        style="background: #be3a55; margin: 0; background:#383838; color: #FFF;">Cancel</button>
+                </div>
+            </div>
+        </div>
+
         <div style="position: absolute;top: 0;left: 0;right: 0;bottom: 0;background: #0000000a;pointer-events: none;"></div>
 
         <script type="text/javascript" src="./assets/js/functions.js"></script>
@@ -534,7 +564,7 @@
         <script type="text/javascript" src="./assets/js/readings.js"></script>
         <script type="text/javascript" src="./assets/js/chart.js"></script>
         <!-- <script type="text/javascript" src="./assets/js/quickview.js"></script> -->
-        <script type="text/javascript" src="./assets/js/datatable.js"></script>
+        <!-- <script type="text/javascript" src="./assets/js/datatable.js"></script> -->
 
     </body>
 </html>

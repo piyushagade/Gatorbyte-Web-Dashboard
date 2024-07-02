@@ -8,6 +8,12 @@ window.globals.apps["users"] = function () {
 
         // Add a user button listener
         $(".add-user-button").click(function () {
+            self.add_edit_users_button();
+        });
+
+
+        // List users button listener
+        $(".list-users-button").click(function () {
             self.manage_users_button();
         });
 
@@ -80,9 +86,9 @@ window.globals.apps["users"] = function () {
                             rules: [],
                             colors: {
                                 "editor.foreground": "#000000",
-                                "editor.background": "#FFFFFF00",
+                                "editor.background": "#FFFFFFAA",
                                 "editorCursor.foreground": "#8B0000",
-                                "editor.lineHighlightBackground": "#0000FF20",
+                                // "editor.lineHighlightBackground": "#0000FF20",
                                 "editorLineNumber.foreground": "#AAAAAA",
                                 "editor.selectionBackground": "#00008830",
                                 "editor.inactiveSelectionBackground": "#88000015",
@@ -99,6 +105,11 @@ window.globals.apps["users"] = function () {
                             automaticLayout: true,
                             readOnly: false,
                             autoIndent: "full",
+                            lineNumbersMinChars: 2,
+                            minimap: false,
+                            lightbulb: true,
+                            fontSize: 16,
+
                         });
                     
                         // Resize the editor when the window size changes
@@ -397,7 +408,7 @@ window.globals.apps["users"] = function () {
         $(".dashboard-ui").addClass("hidden");
     }
 
-    self.manage_users_button = () => {
+    self.add_edit_users_button = (editdata) => {
 
         popup().open({
             "css": {
@@ -427,6 +438,10 @@ window.globals.apps["users"] = function () {
 
                     .list-item[role='admin'] {
                         background: #96b9ff;
+                    }
+
+                    .list-item[role='super'] {
+                        background: coral;
                     }
                 */})
             },
@@ -500,8 +515,8 @@ window.globals.apps["users"] = function () {
                     </div>
                 </div>
             */}),
-            "title": "New user",
-            "subtitle": "Use this to add a new user (🚧 Under construction)",
+            "title": editdata ? "Edit user" : "New user",
+            "subtitle": editdata ? "Editing account for " + editdata["NAME"] : "Use this to add a new user",
             "theme": "light",
             "on_load": function (args) {
                 var ui = args.ui;
@@ -569,6 +584,76 @@ window.globals.apps["users"] = function () {
                 }
                 else {
                     ui.body.find(".projects-list").find(".empty-notification").removeClass("hidden");
+                }
+
+                // If edit mode is requested
+                if (editdata != undefined) {
+
+                    ui.body.attr("user-uuid", editdata["UUID"]);
+                    ui.body.find(".name-input").val(editdata["NAME"]);
+                    ui.body.find(".email-input").val(editdata["EMAIL"]);
+                    ui.body.find(".password-input").closest(".panel").remove();
+
+                    $.ajax({
+                        url: window.globals.constants.api + "/users/get/projects/byuser",
+                        method: "post",
+                        data: JSON.stringify({
+                            "timestamp": moment.now(),
+                            "user-uuid": editdata["UUID"]
+                        }),
+                        success: function (response) {
+                            if (response.status == "success") {
+                                var projectaccessdata = response.payload;
+
+                                // Timeout to wait for listeners to be registered
+                                setTimeout(() => {
+                                    projectaccessdata.forEach(function (projectaccessrow, par) {
+                                        ui.body.find(".projects-list-item[project-uuid='" + projectaccessrow["PROJECTUUID"] + "']").click().attr("role", projectaccessrow["ROLE"]);
+                                        
+                                        // Get device access data
+                                        if (par == projectaccessdata.length - 1) {
+                                            $.ajax({
+                                                url: window.globals.constants.api + "/users/get/devices/byuser",
+                                                method: "post",
+                                                data: JSON.stringify({
+                                                    "timestamp": moment.now(),
+                                                    "user-uuid": editdata["UUID"]
+                                                }),
+                                                success: function (response) {
+                                                    if (response.status == "success") {
+                                                        var deviceaccessdata = response.payload;
+
+                        
+                                                        // Timeout to wait for listeners to be registered
+                                                        setTimeout(() => {
+                                                            deviceaccessdata.forEach(function (deviceaccessrow, dar) {
+                                                                ui.body.find(".devices-list-item[device-uuid='" + deviceaccessrow["DEVICEUUID"] + "']").click().attr("role", deviceaccessrow["ROLE"]);
+                                                            });
+                        
+                                                        }, 500);
+                                                    }
+                                                },
+                                                error: function (x, h, r) {
+                                                    variables.results.push({
+                                                        "user-creation": "Error creating user.",
+                                                        "success": false
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+
+                                }, 500);
+                            }
+                        },
+                        error: function (x, h, r) {
+                            variables.results.push({
+                                "user-creation": "Error creating user.",
+                                "success": false
+                            });
+                        }
+                    });
+
                 }
             },
             "listeners": function (args) {
@@ -665,8 +750,201 @@ window.globals.apps["users"] = function () {
                 });
 
                 ui.actionbuttons.find(".form-submit-button").off("click").click(function () {
-                    self.add_user_on_server(args);
+                    self.add_edit_on_server(args);
                 });
+            },
+            "actionbuttons": [
+                multiline(function () {/* 
+                    <button class="green form-submit-button">{{button-text}}</button>
+                */}, {
+                    "button-text": editdata ? "Update" : "Add"
+                }),
+                multiline(function () {/* 
+                    <button class="grey modal-close-button">Discard</button>
+                */}),
+            ]
+        });
+    }
+
+    self.manage_users_button = () => {
+
+        popup().open({
+            "css": {
+                "body": {
+                    "background-color": "transparent"
+                },
+                "inject": multiline(() => {/* 
+
+                    .list {
+                        display: flex; 
+                        flex-wrap: wrap;
+                        margin-top: 4px;
+                    }
+
+                    .list-item {
+                        flex: 0 1 auto; 
+                        margin: 0 8px 8px 0; 
+                        padding: 0px 10px; 
+                        border-radius: 2px; 
+                        background: #e9e9e9; 
+                        cursor: pointer;
+                    }
+
+                    .list-item[role='user'] {
+                        background: #b9e79d;
+                    }
+
+                    .list-item[role='admin'] {
+                        background: #96b9ff;
+                    }
+                */})
+            },
+            "html": multiline(function () {/* 
+                <div class="row" data-step="form">
+                    <div class="col">
+
+                        <!-- Users list -->
+                        <div class="col-12 panel light devices-list-parent">
+                            <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">Users</p> 
+                            <p class="hidden" style="font-size: 13px;color: #444;margin-bottom: 0;">Select a user t.</p> 
+                            <div class="users-list-parent" style="padding: 0px 4px;"></div>
+                        </div>
+                        
+                    
+                    </div>
+                </div>
+            */}),
+            "title": "Users list",
+            "subtitle": "The following list shows all users in the project(s) you are administrator.",
+            "theme": "light",
+            "on_load": function (args) {
+                var ui = args.ui;
+                ui.popup.find(".body").removeClass("shadow");
+
+                $.ajax({
+                    url: window.globals.constants.api + "/users/get/users/byproject/",
+                    method: "post",
+                    data: JSON.stringify({
+                        "timestamp": moment.now(),
+                        "project-uuid": window.sls.getItem("state/project/uuid")
+                    }),
+                    success: function (response) {
+
+                        if (response.status == "success") {
+                            
+                            try {
+                                datatable().generate({
+                                    "id": "users-list",
+                                    "theme": "light",
+                                    "container": ui.body.find(".users-list-parent"),
+                                    "empty-message": "No users added yet",
+                                    "striped": true,
+                                    "data": {
+                                        "uuid": "ID",
+                                        "headers": [
+                                            {
+                                                "id": "NAME",
+                                                "name": "Name",
+                                                "width": "160px",
+                                                "title": true,
+                                            },
+                                            {
+                                                "id": "ROLE",
+                                                "name": "Role",
+                                                "width": "60px"
+                                            },
+                                            {
+                                                "id": "UUID",
+                                                "name": "UUID",
+                                                "width": "130px",
+                                                "title": true
+                                            }                        
+                                        ],
+                                        "rows": response.payload
+                                    },
+                                    "actions": [
+                                        {
+                                            "id": "edit-user",
+                                            "title": "Edit user",
+                                            "onclick": function (that) {
+                                                var userdata = self.f.b64_to_json($(that).parent().attr("data-b64"));
+                                                self.add_edit_users_button(userdata);
+                                            },
+                                            "icon": {
+                                                "class": "fas fa-edit",
+                                            }
+                                        },
+                                        {
+                                            "id": "delete-user-button",
+                                            "title": "Delete user",
+                                            "icon": {
+                                                "class": "fa-solid fa-trash",
+                                                "color": "crimson"
+                                            },
+                                            "ondblclick": function (that) {
+                                                
+                                                self.f.create_popup(
+                                                    "Are you sure you want to delete this event? This action is irreversible."
+                                                , true, function () {
+                        
+                                                    if (!self.f.b64_to_json($(that).parent().attr("data-b64"))) {
+                                                        console.error ("The event could not be deleted. The b64 is invalid.")    
+                                                        return;
+                                                    }
+                        
+                                                    return;
+
+                                                    var event = self.f.b64_to_json($(that).parent().attr("data-b64"));
+                        
+                                                    if (event.TYPE != "sale") 
+                                                        self.edit_event("delete", event, {
+                                                            }, function (success) {
+                                                                if (success) {
+                                                                    self.parent.get_events_data()
+                                                                        .then(function() {
+                                                                            datatable.update({
+                                                                                "data": window.globals.data.events
+                                                                            });
+                                                                        });
+                                                                }
+                                                            });
+                                                    else  
+                                                        self.edit_sale("delete", event, {
+                                                            }, function (success) {
+                                                                if (success) {
+                                                                    self.parent.get_events_data()
+                                                                        .then(function() {
+                                                                            datatable.update({
+                                                                                "data": window.globals.data.events
+                                                                            });
+                                                                        });
+                                                                }
+                                                            });
+                                                }, function () {});
+                                            }
+                                        }
+                                    ],
+                                    "rowsperpage": 8,
+                                    "searchable": false
+                                });
+                            }
+                            catch (e) {
+                                console.log(e);
+                            }
+                        }
+                    },
+                    error: function (x, h, r) {
+                        variables.results.push({
+                            "user-creation": "Error creating user.",
+                            "success": false
+                        });
+                    }
+                });
+            },
+            "listeners": function (args) {
+
+                var ui = args.ui;
+
             },
             "actionbuttons": [
                 multiline(function () {/* 
@@ -679,11 +957,14 @@ window.globals.apps["users"] = function () {
         });
     }
 
-    self.add_user_on_server = function (args) {
+    self.add_edit_on_server = function (args) {
         var ui = args.ui;
+        var editmode = ui.body.find(".password-input").val() == undefined;
+        
         var name = ui.body.find(".name-input").val().trim();
         var email = ui.body.find(".email-input").val().toLowerCase().trim();
-        var password = ui.body.find(".password-input").val().trim();
+        var password = editmode ? null : ui.body.find(".password-input").val().trim();
+        var useruuid = editmode ? ui.body.attr("user-uuid") : null;
 
         // Validation
         var errors = [];
@@ -707,20 +988,21 @@ window.globals.apps["users"] = function () {
             "results": []
         });
 
-        // Create user account
+        // Create/update user account
         wf.addTask(function (variables) {
 
             return new Promise(function (resolve, reject) {
-                console.log("Adding user account: " + email);
+                console.log((editmode ? "Updating" : "Adding") + " user account: " + email);
 
                 $.ajax({
-                    url: window.globals.constants.api + "/users/user/add",
+                    url: window.globals.constants.api + "/users/user/" + (editmode ? "update" : "add"),
                     method: "post",
                     data: JSON.stringify({
-                        "timestamp": new Date().getTime(),
+                        "timestamp": moment.now(),
                         "name": name,
                         "email": email,
-                        "password": password
+                        "password": password,
+                        "user-uuid": useruuid
                     }),
                     success: function (response,) {
                         if (response.status == "success") {
@@ -743,6 +1025,40 @@ window.globals.apps["users"] = function () {
                 });
             });
         });
+        
+        // Delete current project access for the user
+        wf.addTask(function (variables) {
+            return new Promise(function (resolve, reject) {
+
+                console.log("Deleting all project access");
+
+                // Add project access entry
+                $.ajax({
+                    url: window.globals.constants.api + "/gatorbyte/projects/access/delete/all",
+                    method: "post",
+                    data: JSON.stringify({
+                        "timestamp": moment.now(),
+                        "user-uuid": variables["user-uuid"],
+                    }),
+                    success: function (response) {
+                        if (response.status == "success") {
+                            resolve();
+                        }
+                        else {
+                            reject();
+                        }
+                    },
+                    error: function (x, h, r) {
+                        variables.results.push({
+                            "device-access": "Couldn't create delete all projec access.",
+                            "device-uuid": devicedata["UUID"],
+                            "success": false
+                        });
+                        reject();
+                    }
+                });
+            });
+        });
 
         // Add each project to access list
         ui.body.find(".projects-list-item[role]").each(function (ei, el) {
@@ -750,9 +1066,11 @@ window.globals.apps["users"] = function () {
             var projectaccessdata = self.f.b64_to_json($(el).attr("data-b64"));
 
             wf.addTask(function (variables) {
+
+                console.log(variables);
                 return new Promise(function (resolve, reject) {
                     
-                    console.log("Adding project access: " + projectaccessdata["PROJECTUUID"]);
+                    console.log("Adding/updating project access: " + projectaccessdata["PROJECTUUID"]);
 
                     // Add project access entry
                     $.ajax({
@@ -791,6 +1109,40 @@ window.globals.apps["users"] = function () {
             });
         });
 
+        // Delete current access for the user
+        wf.addTask(function (variables) {
+            return new Promise(function (resolve, reject) {
+
+                console.log("Deleting all device access");
+
+                // Add device access entry
+                $.ajax({
+                    url: window.globals.constants.api + "/gatorbyte/sites/access/delete/all",
+                    method: "post",
+                    data: JSON.stringify({
+                        "timestamp": moment.now(),
+                        "user-uuid": variables["user-uuid"],
+                    }),
+                    success: function (response) {
+                        if (response.status == "success") {
+                            resolve();
+                        }
+                        else {
+                            reject();
+                        }
+                    },
+                    error: function (x, h, r) {
+                        variables.results.push({
+                            "device-access": "Couldn't create delete all device access.",
+                            "device-uuid": devicedata["UUID"],
+                            "success": false
+                        });
+                        reject();
+                    }
+                });
+            });
+        });
+        
         // Add each device to access list
         ui.body.find(".devices-list-item[role]").each(function (ei, el) {
             var role = $(el).attr("role");
