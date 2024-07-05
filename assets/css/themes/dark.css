@@ -427,3 +427,20 @@ body.dark .external-chart-tooltip-parent {
     padding: 10px; 
     z-index: 1000;
 }
+
+.status-circle {
+    &.active {
+        background-color: #009d00;
+        animation: pulse-opacity infinite 3s;
+    }
+
+    &.warning {
+        background-color: #a35012;
+        animation: pulse-opacity infinite 1s;
+    }
+
+    &.error {
+        background-color: #ab0020;
+        animation: pulse-opacity infinite 0.5s;
+    }
+}

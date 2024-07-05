@@ -5,6 +5,7 @@
         
         <link rel="stylesheet" href="./assets/css/main.css">
         <link rel="stylesheet" href="./assets/css/map.css">
+        <link rel="stylesheet" href="./assets/css/animation.css">
         <link rel="stylesheet" href="./assets/css/ui.css">
         <link rel="stylesheet" href="./assets/css/scrollbar.css">
 
@@ -153,6 +154,15 @@
             <div class="" style="max-width: 300px;">
                 <div class="logo-image-parent">
                     <img src="./assets/images/logo.png" style="max-width: 300px;">
+                    <div style="padding: 0 20px; min-height: 50px;">
+                        <div class="loader" style="animation: none;">
+                            <div class="line" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #b5b5b5;"></div>
+                            <div class="line" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #b5b5b5;"></div>
+                            <div class="line" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #b5b5b5;"></div>
+                            <div class="line" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #b5b5b5;"></div>
+                            <div class="line" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background-color: #b5b5b5;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -162,7 +172,7 @@
 
             <div class="row">
     
-                <main role="main" class="col-md-12 col-lg-12">
+                <main role="main" class="col-md-12 col-lg-12" style="position: relative;">
                     
                     <!-- Header -->
                     <div class="header-menu-row header-menu shadow-light" style="margin-bottom: 10px; position: relative; margin: 0px -15px 12px; padding: 10px 6px 10px 6px; width: -webkit-fill-available;">
@@ -345,13 +355,13 @@
                         </div>
                     </div>
 
-                    <div class="dashboard-ui" style="margin-top: 20px;">
+                    <div class="dashboard-ui" style="margin-top: 20px; position: relative;">
 
                         <!-- Data summary fields -->
                         <div class="section-parent data-summary-fields-list hidden" style="margin-bottom: 20px;">
                             <div class="row">
-                                <div class="col-12 section-heading" style="font-size: 15px; padding: 0;">
-                                    Latest sensor readings <span style="color: #999; font-size: 12px;">(Last updated:</span> <span class="last-update-timestamp" style="color: #999; font-size: 12px;"></span><span style="color: #999; font-size: 12px;">)</span>
+                                <div class="col-12 section-heading" style="font-size: 15px; padding: 0; display: inline-flex;">
+                                    <div>Latest sensor readings <span style="color: #999; font-size: 12px;">(Last updated:</span></div> <div class="last-update-timestamp" style="color: #999; font-size: 12px; display: inline-flex; line-height: 23px; padding: 0 4px;"></div><div style="color: #999; font-size: 12px; line-height: 22px;">)</div>
                                 </div>
                             </div>
                             <div class="row list"></div>
@@ -505,6 +515,20 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- ! Loader ui -->
+                        <div class="loader-parent hidden" style="z-index: 10000;position: absolute; margin: 0 -20px; padding: 24px 22px; backdrop-filter: blur(4px);-webkit-backdrop-filter: blur(4px);pointer-events: auto;bottom: 0;top: 0;right: 0;left: 0;">
+                            <div style="padding: 14px 20px; min-height: 50px;">
+                                
+                                <!-- Loader -->
+                                <div class="loader">
+                                    <div class="line"></div>
+                                    <div class="line"></div>
+                                    <div class="line"></div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </main>
 

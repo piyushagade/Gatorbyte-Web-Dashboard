@@ -187,7 +187,13 @@ window.globals.apps["readings"] = function () {
 
                                         $(".data-summary-fields-list").removeClass("hidden");
                                         $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(value && !isNaN(formattedvalue) ? formattedvalue : "-");
-                                        $(".data-summary-fields-list .last-update-timestamp").html(moment((parseInt(row.TIMESTAMP)) * 1000).format("LLL"));
+                                        $(".data-summary-fields-list .last-update-timestamp").attr("title", moment(row.TIMESTAMP * 1000).format("LLL")).html(multiline (function () {/* 
+                                            <div class="status-circle {{colorclass}}"></div>
+                                            <div>{{timestamp}}</div>
+                                        */}, {
+                                            "timestamp": moment(row.TIMESTAMP * 1000).fromNow(),
+                                            "colorclass": moment.now() - row.TIMESTAMP * 1000 < 2 * 3600 * 1000 ? "active" : (moment.now() - row.TIMESTAMP * 1000 < 12 * 3600 * 1000 ? "warning" : "error")
+                                        }));
                                     }, 100);
                                 }
                             }

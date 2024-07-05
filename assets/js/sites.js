@@ -74,10 +74,6 @@ window.globals.apps["sites"] = function () {
         console.log("Site selected: " + global.DEVICE_ID);
         console.log("Device SN: " + self.ls.getItem("state/device/sn"));
 
-
-        // // Hide empty site option in dropdown
-        // $("#device-selector").find('option[value=""]').remove();
-
         // Hide notification
         $(".notification-parent-ui .no-site-selected-notification").addClass("hidden");
         $(".project-device-selector-button").removeClass("an-flash");
@@ -222,6 +218,9 @@ window.globals.apps["sites"] = function () {
                             
                             // Call callback if available
                             if (callback && typeof callback == "function") callback();
+
+                            // Hide loader
+                            $(".loader-parent").addClass("hidden");
         
                         },
                         error: function (request, textStatus, errorThrown) {
@@ -230,6 +229,9 @@ window.globals.apps["sites"] = function () {
 
                             // Call callback if available
                             if (callback && typeof callback == "function") callback();
+
+                            // Hide loader
+                            $(".loader-parent").addClass("hidden");
                         }
                     });
                 },

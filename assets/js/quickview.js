@@ -257,7 +257,13 @@ window.globals.apps["quickview"] = function () {
 
                 // Set the data summary field with the latest data
                 $(".data-summary-fields-list .data-summary-field[data-series-id='" + chart_name + "']").find(".value").html(!isNaN(parseFloat(d[chart_name])) ? parseFloat(d[chart_name]).toFixed(2) : "-");
-                $(".data-summary-fields-list .last-update-timestamp").html(moment(timestamp - parseInt(window.globals.variables["tz-offset"]) * 1000).format("LLL"));
+                $(".data-summary-fields-list .last-update-timestamp").attr("title", moment(row.TIMESTAMP * 1000).format("LLL")).html(multiline (function () {/* 
+                    <div class="status-circle {{colorclass}}"></div>
+                    <div>{{timestamp}}</div>
+                */}, {
+                    "timestamp": moment(row.TIMESTAMP * 1000).fromNow(),
+                    "colorclass": moment.now() - row.TIMESTAMP * 1000 < 2 * 3600 * 1000 ? "active" : (moment.now() - row.TIMESTAMP * 1000 < 12 * 3600 * 1000 ? "warning" : "error")
+                }));
             });
         }
     }

@@ -512,3 +512,51 @@ tbs { border: 1px dashed blue; }
     padding: 15px;
     z-index: 1;
 }
+
+.status-circle {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: grey;
+    margin-right: 3px;
+    margin-top: 6px;
+}
+
+/* Loader */
+.loader {
+    text-align: center;
+    margin: auto auto;
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    height: 48px;
+    animation: pulse-opacity infinite 3s;
+}
+
+.loader .line {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    background-color: #db844b;
+}
+
+.loader .line:nth-last-child(1) {
+    animation: loaderanimation 0.6s 0.1s linear infinite;
+}
+
+.loader .line:nth-last-child(2) {
+    animation: loaderanimation 0.6s 0.2s linear infinite;
+}
+
+.loader .line:nth-last-child(3) {
+    animation: loaderanimation 0.6s 0.3s linear infinite;
+}
+
+.loader .line:nth-last-child(4) {
+    animation: loaderanimation 0.6s 0.4s linear infinite;
+}
+
+.loader .line:nth-last-child(5) {
+    animation: loaderanimation 0.6s 0.5s linear infinite;
+}

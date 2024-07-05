@@ -61,7 +61,7 @@ window.globals.apps["projects"] = function () {
                     // Project click listener
                     $(".device-menu .projects-list").find(".projects-list-item").off("click").on("click", function () {
                         
-                        $(".devices-list .projects-list-item").removeClass("selected");
+                        $(".projects-list .projects-list-item").removeClass("selected");
                         $(this).addClass("selected");
                         $(".devices-list").find(".project-not-selected-notification").addClass("hidden");
 
@@ -117,6 +117,9 @@ window.globals.apps["projects"] = function () {
                                     var devicerole = $(this).attr("device-role");
 
                                     if (!devicesn) console.log("Device's SN is not set.");
+
+                                    // Show loader
+                                    $(".loader-parent").removeClass("hidden");
         
                                     $(".project-device-selector-button .selected-device-name").html(devicename);
                                     
@@ -154,6 +157,15 @@ window.globals.apps["projects"] = function () {
                                     window.globals.constants["device"]["type"] = devicetype;
                                     window.globals.constants["device"]["sn"] = devicesn;
                 
+                                    // Reset last update timestamp display
+                                    $(".data-summary-fields-list .last-update-timestamp").removeAttr("title").html(multiline (function () {/* 
+                                        <div class="status-circle {{colorclass}}"></div>
+                                        <div>{{timestamp}}</div>
+                                    */}, {
+                                        "timestamp": "Unknown",
+                                        "colorclass": ""
+                                    }));
+                                    
                                     // Call on_device_selected function
                                     window.globals.accessors["sites"].on_site_selected(callback);
         
@@ -179,86 +191,6 @@ window.globals.apps["projects"] = function () {
                         }
 
                         return;
-
-                        // self.f.set_state("?p=" + $(that).attr("project-id"));
-
-                        $(".projects-list .projects-list-item").removeClass("selected");
-                        $(that).addClass("selected");
-
-                        $(".project-name").html($(that).attr("project-name"));
-
-                        data["SITES"].forEach(function (projectsite, psi) {
-
-                            $(".devices-list").removeClass("hidden");
-                            $(".devices-list").append(multiline (function () {/* 
-                                <div class="col-auto devices-list-item ui-truncate" project-id="{{project-id}}" site-id="{{site-id}}" site-name="{{site-name}}">
-                                    {{site-name}}
-                                </div>
-                            */},
-                            {
-                                "project-id": projectid,
-                                "site-name": projectsite["SITE-ID"],
-                                "site-id": projectsite["SITE-ID"]
-                            }));
-                        });
-                        
-                        // // If site/device name requested in the URL
-                        // if (globals.data["url-params"].has("d")) {
-                        //     setTimeout(() => {
-                        //         $(".devices-list .devices-list-item[site-id='" + globals.data["url-params"].get("d") + "']").click();
-                        //     }, 10);
-                        // }
-
-                        $(".devices-list .devices-list-item").off("click").click(function () {
-                            var sitetype = "gatorbyte";
-                            var projectid = $(this).attr("project-id");
-                            var siteid = $(this).attr("site-id");
-                            var sitename = $(this).attr("site-name");
-
-                            $(".project-device-selector-button .selected-device-name").html(sitename);
-                            
-                            self.f.set_state("?p=" + projectid + "&d=" + siteid);
-
-                            $(".devices-list .devices-list-item").removeClass("selected");
-                            $(this).addClass("selected");
-
-                            // Set selected site to localStorage
-                            self.ls.setItem("site", siteid);
-
-                            // Leave room of old device/site
-                            window.globals.accessors["socket"].publish({
-                                action: "room/leave",
-                                payload: self.ls.setItem("state/device/id")
-                            });
-
-                            // Set device id
-                            window.globals.constants["device"]["id"] = siteid;
-                            
-                            // Set device type
-                            window.globals.constants["device"]["type"] = sitetype;
-        
-                            // Call on_site_selected function
-                            window.globals.accessors["sites"].on_site_selected(callback);
-
-                            //  Recreate chart
-                            let chart = $("#chart-container").highcharts();
-                            while(chart && chart.series.length > 0) chart.series[0].remove(true);
-
-                            window.globals.accessors["sites"].get_site_config_data(siteid, function() {
-                                var sitedata = window.globals.data["site"];
-
-                                $(".sites-list").addClass("hidden");
-                                $(".sites-info").removeClass("hidden");
-                                $(".sites-info .site-name").text(sitename);
-                                $(".sites-info .site-id").text(siteid);
-                                $(".sites-info .site-address").text(sitedata["ADDRESS"]["LOCATION"]);
-                                $(".sites-info .site-installed-on-date").text(sitedata["INSTALLED-ON"]);
-                            })
-
-                        });
-
-                        // // Load locator map
-                        // self.show_locator();
                     });
 
                     // If site requested in the URL
@@ -320,6 +252,15 @@ window.globals.apps["projects"] = function () {
                         // window.globals.constants["device"]["uuid"] = deviceuuid;
                         window.globals.constants["device"]["type"] = devicetype;
     
+                        // Reset last update timestamp display
+                        $(".data-summary-fields-list .last-update-timestamp").removeAttr("title").html(multiline (function () {/* 
+                            <div class="status-circle {{colorclass}}"></div>
+                            <div>{{timestamp}}</div>
+                        */}, {
+                            "timestamp": "Unknown",
+                            "colorclass": ""
+                        }));
+
                         // Call on_device_selected function
                         window.globals.accessors["sites"].on_site_selected(callback);
                     }

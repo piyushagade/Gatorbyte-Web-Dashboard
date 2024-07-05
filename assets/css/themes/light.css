@@ -446,3 +446,20 @@ body.light .external-chart-tooltip-parent {
 .chart-point-popup .item:last-child {
     margin-right: 0px;
 }
+
+.status-circle {
+    &.active {
+        background-color: #13cb13;
+        animation: pulse-opacity infinite 3s;
+    }
+
+    &.warning {
+        background-color: #f16f40;
+        animation: pulse-opacity infinite 1s;
+    }
+
+    &.error {
+        background-color: crimson;
+        animation: pulse-opacity infinite 0.5s;
+    }
+}

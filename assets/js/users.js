@@ -437,11 +437,11 @@ window.globals.apps["users"] = function () {
                     }
 
                     .list-item[role='admin'] {
-                        background: #96b9ff;
+                        background: #abecf7;
                     }
 
                     .list-item[role='super'] {
-                        background: coral;
+                        background: #e2c1eb;
                     }
                 */})
             },
@@ -518,6 +518,7 @@ window.globals.apps["users"] = function () {
             "title": editdata ? "Edit user" : "New user",
             "subtitle": editdata ? "Editing account for " + editdata["NAME"] : "Use this to add a new user",
             "theme": "light",
+            "waitforready": editdata ? true : false,
             "on_load": function (args) {
                 var ui = args.ui;
                 ui.popup.find(".body").removeClass("shadow");
@@ -629,7 +630,9 @@ window.globals.apps["users"] = function () {
                                                             deviceaccessdata.forEach(function (deviceaccessrow, dar) {
                                                                 ui.body.find(".devices-list-item[device-uuid='" + deviceaccessrow["DEVICEUUID"] + "']").click().attr("role", deviceaccessrow["ROLE"]);
                                                             });
-                        
+                                                            
+                                                            // Set the ready flag
+                                                            args.object.popup.ready();
                                                         }, 500);
                                                     }
                                                 },
@@ -638,6 +641,9 @@ window.globals.apps["users"] = function () {
                                                         "user-creation": "Error creating user.",
                                                         "success": false
                                                     });
+
+                                                    // Set the ready flag
+                                                    args.object.popup.ready();
                                                 }
                                             });
                                         }
@@ -817,10 +823,12 @@ window.globals.apps["users"] = function () {
             "title": "Users list",
             "subtitle": "The following list shows all users in the project(s) you are administrator.",
             "theme": "light",
+            "waitforready": true,
             "on_load": function (args) {
                 var ui = args.ui;
                 ui.popup.find(".body").removeClass("shadow");
 
+                // Get users who have access to the current project
                 $.ajax({
                     url: window.globals.constants.api + "/users/get/users/byproject/",
                     method: "post",
@@ -829,6 +837,9 @@ window.globals.apps["users"] = function () {
                         "project-uuid": window.sls.getItem("state/project/uuid")
                     }),
                     success: function (response) {
+
+                        // Set the ready flag
+                        args.object.popup.ready();
 
                         if (response.status == "success") {
                             
@@ -1197,6 +1208,13 @@ window.globals.apps["users"] = function () {
             .then ((variables) => {
                 console.log("All tasks have been executed.");
                 console.log(variables);
+
+                console.log(variables);
+
+                args.object.popup.shownotification({
+                    "type": "success",
+                    "message": "All tasks completed.",
+                });
             });
     }
 }

@@ -78,7 +78,6 @@ var popup_app = function () {
 
     self.init = function () {
         self.uuid = generateuuid().split("-")[0];
-
         return self;
     }
 
@@ -87,7 +86,6 @@ var popup_app = function () {
     */
     self.open = function (args) {
 
-        
         self.args = args;
         
         //! Create UI skeleton
@@ -212,6 +210,7 @@ var popup_app = function () {
                         $(".popup-container[uuid='" + self.uuid + "']").addClass("hidden").find(".popup .body").html("");
                         $(".popup-container[uuid='" + self.uuid + "']").addClass("hidden").find(".popup .heading .title").html("");
                         $(".popup-container[uuid='" + self.uuid + "']").addClass("hidden").find(".popup .heading .subtitle").html("");
+                        $(".popup-container[uuid='" + self.uuid + "']").remove();
                         if (args.on_close && typeof args.on_close == "function") args.on_close({...getreturndata()}); 
                     });
 
@@ -703,11 +702,11 @@ var popup_app = function () {
     }
 
     self.showloader = () => {
-        $(".popup-container[uuid='" + self.uuid + "'] .loader").removeClass("hidden");
+        $(".popup-container[uuid='" + self.uuid + "'] .wait-for-action-loader ").removeClass("hidden");
     }
 
     self.hideloader = () => {
-        $(".popup-container[uuid='" + self.uuid + "'] .loader").addClass("hidden");
+        $(".popup-container[uuid='" + self.uuid + "'] .wait-for-action-loader ").addClass("hidden");
     }
     
     self.shownotification = (args) => {
@@ -890,15 +889,6 @@ var popup_app = function () {
             object: { 
                 popup: self,
                 tab: tabdata
-            },
-            event: {
-                on_load: self.on_load,
-                on_tab_change: self.on_tab_change,
-                on_close: self.on_close,
-                listeners: self.listeners
-            },
-            function: {
-                updateactionbuttons: self.updateactionbuttons
             }
         }
     }
@@ -911,6 +901,9 @@ var popup_app = function () {
 
         console.info("Creating new popup, ID: " + self.uuid);
 
+        self.popupcount = $(".popup-container").length + 1;
+        console.log("Open popup count: " + self.popupcount);
+
         //! Prevent body scroll
         // $("body").css("overflow-y", "hidden");
         // $("body").css("overflow-x", "hidden");
@@ -921,11 +914,11 @@ var popup_app = function () {
             //! If tabs are requested
             if (args.tabs && args.tabs.length > 0) {
                 $("body .popup-parent").append(multiline(function () {/* 
-                    <div class="popup-container hidden" uuid="{{uuid}}" style="backdrop-filter: blur({{blur-value}}); -webkit-backdrop-filter: blur({{blur-value}});">
+                    <div class="popup-container hidden" uuid="{{uuid}}">
                         
                         <!-- Content -->
                         <div class="content" style="color: #FFFFFF99; padding: 10px; width: 98%; max-height: 95vh; overflow-y: hidden;">
-                            <div class="popup shadow-heavy absolute-center" theme-item="popup-parent" style="background: #bbbbbb;border-radius: 8px;min-width: 150px;min-height: 100px; color: rgb(34, 34, 34);overflow: hidden;width: 90%;">
+                            <div class="popup absolute-center" theme-item="popup-parent" style="background: #bbbbbb;border-radius: 8px;min-width: 150px;min-height: 100px; color: rgb(34, 34, 34);overflow: hidden;width: 90%;">
                                 
                                 <!-- Heading -->
                                 <div class="heading shadow" theme-item="popup-heading" style="background: #f6f6f6;z-index: 1;padding: 8px 14px; animation: 1s all ease-in-out;">
@@ -959,18 +952,25 @@ var popup_app = function () {
                 */},
                 {
                     "uuid": self.uuid,
-                    "blur-value": $(".popup-container").length == 0 ? "3px" : "2px"
                 }))
             }
 
             //! No tabs requested
             else {
                 $("body .popup-parent").append(multiline(function () {/* 
-                    <div class="popup-container hidden" uuid="{{uuid}}" style="pointer-events: all; height: 100%;width: 100%;margin: 0;padding: 20px;background: rgba(26, 26, 26, 0.6);backdrop-filter: blur({{blur-value}}); -webkit-backdrop-filter: blur({{blur-value}});top: 0;position: fixed; z-index: 1000000;">
+                    <div class="popup-container hidden" uuid="{{uuid}}">
                         
                         <!-- Content -->
                         <div class="content" style="color: #FFFFFF99; padding: 10px; width: 98%; height: 100%;">
-                            <div class="popup shadow-heavy absolute-center" theme-item="popup-parent" style="background: rgba(255, 255, 255, 0.882); border-radius: 8px; min-width: 150px; min-height: 100px; color: rgb(34, 34, 34); overflow: hidden; width: 90%;">
+
+                            <!-- Loader -->
+                            <div class="wait-for-ready-loader hidden loader absolute-center">
+                                <div class="line"></div>
+                                <div class="line"></div>
+                                <div class="line"></div>
+                            </div>
+
+                            <div class="popup absolute-center" theme-item="popup-parent" style="background: rgba(255, 255, 255, 0.882); border-radius: 8px; min-width: 150px; min-height: 100px; color: rgb(34, 34, 34); overflow: hidden; width: 90%;">
                                 
                                 <!-- Heading -->
                                 <div class="heading shadow" theme-item="popup-heading" style="background: rgb(246, 246, 246);z-index: 1;padding: 8px 14px;animation: 1s ease-in-out 0s 1 normal none running all;display: block;height: auto;margin: 5px;border-radius: 5px;">
@@ -1000,7 +1000,7 @@ var popup_app = function () {
                                 </div>
 
                                 <!-- Loader -->
-                                <div class="loader hidden">
+                                <div class="wait-for-action-loader loader hidden">
                                     <div class="line"></div>
                                     <div class="line"></div>
                                     <div class="line"></div>
@@ -1018,7 +1018,6 @@ var popup_app = function () {
                 */},
                 {
                     "uuid": self.uuid,
-                    "blur-value": $(".popup-container").length == 0 ? "3px" : "2px"
                 }));
             }
         }
@@ -1050,6 +1049,12 @@ var popup_app = function () {
         }
         else if (!args.tabs) {
             self.ui.find(".action-buttons-parent").html("").addClass("hidden");
+        }
+
+        // If 'wait for ready' requested
+        if (self.args.waitforready) {
+            $(".popup-container[uuid='" + self.uuid + "']").find(".popup").addClass("hidden");
+            $(".popup-container[uuid='" + self.uuid + "']").find(".wait-for-ready-loader").removeClass("hidden");
         }
 
         return self;
@@ -1268,41 +1273,18 @@ var popup_app = function () {
                 });
             }
         });
-    } 
+    }
+
+    self.ready = function () {
+        $(".popup-container[uuid='" + self.uuid + "']").find(".popup").removeClass("hidden");
+        $(".popup-container[uuid='" + self.uuid + "']").find(".wait-for-ready-loader").addClass("hidden");
+
+        setheight();
+    }
 }
 
-// Create a new instance of the Popup
+// Factory: Create a new instance of the Popup
 var popup = function () {
     if ($(".popup-parent").length == 0) $("body").append('<div class="popup-parent" style="pointer-events: none; background: transparent; height: 100%;width: 100%;margin: 0;padding: 0px; top: 0; position: absolute; z-index: 1000000; overflow-y: hidden;">');
     return new popup_app().init();
 }
-
-
-// (function($){
-//     $.fn.getStyleObject = function(){
-//         var dom = this.get(0);
-//         var style;
-//         var returns = {};
-//         if(window.getComputedStyle){
-//             var camelize = function(a,b){
-//                 return b.toUpperCase();
-//             };
-
-//             style = window.getComputedStyle(dom, null);
-//             for(var i = 0, l = style.length; i < l; i++){
-//                 var prop = style[i];
-//                 var camel = prop.replace(/\-([a-z])/g, camelize);
-//                 var val = style.getPropertyValue(prop);
-//                 returns[prop] = val;
-//             };
-//             return returns;
-//         };
-//         if(style = dom.currentStyle){
-//             for(var prop in style){
-//                 returns[prop] = style[prop];
-//             };
-//             return returns;
-//         };
-//         return this.css();
-//     }
-// })(jQuery);

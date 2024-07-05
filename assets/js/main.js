@@ -155,8 +155,8 @@ $(document).ready(function () {
             if (!window.globals.accessors["charts"]) window.globals.accessors["charts"] = new window.globals.apps["charts"]().init();
             if (!window.globals.accessors["maps"]) window.globals.accessors["maps"] = new window.globals.apps["maps"]().init();
 
-            // Create datatable
-            window.globals.accessors["datatable"] = new window.globals.apps["datatable"]().init();
+            // // Create datatable
+            // window.globals.accessors["datatable"] = new window.globals.apps["datatable"]().init();
 
             // Initialize calibration tool
             window.globals.accessors["calibration"].get_calibratable_datafields();
