@@ -124,8 +124,27 @@ window.globals.apps["readings"] = function () {
                     if (!window.globals.data["data-fields-readings-formatted"][df.ID]) window.globals.data["data-fields-readings-formatted"][df.ID] = [];
 
                     // Filter invalid timestamp rows
-                    if (row.TIMESTAMP < 1000000000) {
+                    if (row.TIMESTAMP < 1000000000 || row.TIMESTAMP > 2000000000) {
                         invalidtimestamprows.push(row);
+                    }
+
+                    // Filter deleted data
+                    else if (
+                        window.globals.data["data-annotations"].deleted && 
+                        (
+                            (
+                                window.globals.data["data-annotations"].deleted["all"] && 
+                                window.globals.data["data-annotations"].deleted["all"].indexOf(parseInt(row.TIMESTAMP)) != -1
+                            )
+                            ||
+                            (
+                                window.globals.data["data-annotations"].deleted[df.ID] && 
+                                window.globals.data["data-annotations"].deleted[df.ID].indexOf(parseInt(row.TIMESTAMP)) != -1
+                            )
+                        )
+                    
+                    ) { 
+                        // Do nothing
                     }
 
                     else {
@@ -185,15 +204,26 @@ window.globals.apps["readings"] = function () {
                                             formattedvalue = value.toFixed(df.QUICKVIEW["PRECISION"] ? df.QUICKVIEW["PRECISION"] : 2);
                                         }
 
+                                        var rtcerror = false;
+                                        if (row.RECEIVED && Math.abs(row.RECEIVED - row.TIMESTAMP) > 60) {
+                                            rtcerror = true;
+                                            console.warn("On-board RTC may be out-of-sync by " + (row.RECEIVED - row.TIMESTAMP) + " seconds.");
+                                        }
+
                                         $(".data-summary-fields-list").removeClass("hidden");
                                         $(".data-summary-fields-list .data-summary-field[data-series-id='" + df.ID + "']").find(".value").html(value && !isNaN(formattedvalue) ? formattedvalue : "-");
-                                        $(".data-summary-fields-list .last-update-timestamp").attr("title", moment(row.TIMESTAMP * 1000).format("LLL")).html(multiline (function () {/* 
+                                        $(".data-summary-fields-list .last-update-timestamp").html(multiline (function () {/* 
                                             <div class="status-circle {{colorclass}}"></div>
-                                            <div>{{timestamp}}</div>
+                                            <div class="timestamp-text">{{timestamp}}</div>
                                         */}, {
-                                            "timestamp": moment(row.TIMESTAMP * 1000).fromNow(),
-                                            "colorclass": moment.now() - row.TIMESTAMP * 1000 < 2 * 3600 * 1000 ? "active" : (moment.now() - row.TIMESTAMP * 1000 < 12 * 3600 * 1000 ? "warning" : "error")
+                                            "timestamp": moment((row.RECEIVED || row.TIMESTAMP) * 1000).format("LLL") + (rtcerror ? "; <div class='status-circle warning'></div> RTC may be out-of-sync." : ""),
+                                            "colorclass": moment.now() - (row.RECEIVED || row.TIMESTAMP) * 1000 < 2 * 3600 * 1000 ? "active" : (moment.now() - (row.RECEIVED || row.TIMESTAMP) < 12 * 3600 * 1000 ? "warning" : "error")
                                         }));
+                                        $(".data-summary-fields-list .last-update-timestamp").find(".timestamp-text").off("mouseover").on("mouseover", function (e) {
+                                            $(this).html(moment((row.RECEIVED || row.TIMESTAMP) * 1000).fromNow() + (rtcerror ? "; <div class='status-circle warning'></div> RTC may be out-of-sync." : ""));
+                                        }).off("mouseleave").on("mouseleave", function (e) {
+                                            $(this).html(moment((row.RECEIVED || row.TIMESTAMP) * 1000).format("LLL") + (rtcerror ? "; <div class='status-circle warning'></div> RTC may be out-of-sync." : ""));
+                                        });
                                     }, 100);
                                 }
                             }
@@ -533,7 +563,7 @@ window.globals.apps["readings"] = function () {
                 }
             }, 300));
 
-            //! Popup chart
+            //! Popup (expanded) chart
             $(".data-fields-list .expand-data-field-button").off("click").click(function () {
                 var root = $(this).parent().parent().parent();
 

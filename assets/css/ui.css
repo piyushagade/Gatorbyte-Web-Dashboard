@@ -511,6 +511,7 @@ tbs { border: 1px dashed blue; }
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     padding: 15px;
     z-index: 1;
+    user-select: none;
 }
 
 .status-circle {
@@ -559,4 +560,18 @@ tbs { border: 1px dashed blue; }
 
 .loader .line:nth-last-child(5) {
     animation: loaderanimation 0.6s 0.5s linear infinite;
+}
+
+@keyframes loaderanimation {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(0, 15px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
 }

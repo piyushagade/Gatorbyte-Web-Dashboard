@@ -1,0 +1,147 @@
+.dt-parent {
+    font-size: 12.5px;
+
+    .dt {
+        border-radius: 4px;
+        padding: 8px 6px;
+        line-height: 24px;
+    }
+
+    .dt-row {
+        position: relative;
+        display: inline-flex;
+        border-left: 3px solid transparent;
+        padding: 4px;
+        min-width: 0;
+        width: auto;
+        margin: 0 5px;
+        height: 32px;
+    }
+    
+    .actions-pagination-container {
+        padding: 4px;
+        border-radius: 4px;
+    }
+
+    .row-show-action-menu-button {
+        cursor: pointer;
+        margin-right: 6px;
+        margin-top: 3px;
+        font-size: 16px; 
+        line-height: 22px;
+    }
+
+    .expanded-action-menu {
+        min-width: 32px;
+        padding: 2px;
+        cursor: default;
+        border-radius: 2px;
+        margin: 2px;
+        position: absolute;
+        top: 0;
+        left: 0px;
+        z-index: 1;
+        width: revert;
+        display: inline-flex;
+        max-height: -webkit-fill-available;
+        -webkit-backdrop-filter: blur(2px);
+        -moz-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+
+        .row-action-button, .row-close-action-menu-button {
+            cursor: pointer;
+            border-radius: 2px;
+            padding: 4px; 
+            cursor: pointer; 
+            text-align: center;
+            font-size: 13px;
+            margin: 2px 3px;
+            line-height: 10px;
+        }
+
+        .row-close-action-menu-button {
+            border-left: 1px solid #d3d3d3;
+            padding-left: 8px;
+        }
+    }
+
+    &.light {
+        .dt {
+            background: #44444411;
+        }
+
+        .dt-row.striped {
+            background: #E4E4E4;
+        }
+
+        .header-item > div {
+            color: seagreen;
+            border-bottom: 1px solid #AAAAAA; 
+        }
+
+        .dt-item {
+            color: #444444;
+        }
+
+        .row-action-button {
+            color: #555555;
+        }
+
+        .actions-pagination-container {
+            background: #44444411;
+            color: #666666;
+        }
+        
+        .expanded-action-menu {
+            background: #FFFFFFDD;
+            color: #444444;
+        }
+        
+        .row-show-action-menu-button {
+            color: #a8a8a8;
+        }
+    }
+
+    
+    &.dark {
+        .dt {
+            background: #232323f2;
+        }
+
+        .dt-row.striped {
+            background: #3A3A3A;
+        }
+
+        .header-item > div {
+            color: rgb(83, 206, 136);
+            border-bottom: 1px solid #555555; 
+        }
+
+        .dt-item {
+            color: #d6d6d6;
+        }
+
+        .row-action-button {
+            color: #a1a1a1;
+        }
+
+        .actions-pagination-container {
+            background: #393939f6;
+            color: #9b9b9b;
+        }
+        
+        .striped .expanded-action-menu {
+            background: #1F1F1FDD;
+            color: #b1b1b1;
+        }
+        
+        .expanded-action-menu {
+            background: #353535DD;
+        }
+        
+        .row-show-action-menu-button {
+            color: #818181;
+        }
+    }
+
+}

@@ -25,6 +25,10 @@ window.globals.apps["users"] = function () {
                     <p style="margin-bottom: 5px;">Use the following editor to customize the dashboard for the selected device. Please read the documentation before you fiddle with any configuration.</p>
 
                     <div style="display: inline-flex;">
+                        <div class="update-config-gui-button hidden shadow-light" style="cursor: pointer;margin-bottom: 4px; margin-right: 10px; background: #5e5e5e;border: 0px solid #EEE;color: #EEE;padding: 4px 10px;width: fit-content;border-radius: 2px;">
+                            GUI
+                        </div>
+
                         <div class="update-config-button shadow-light" style="cursor: pointer;margin-bottom: 4px; margin-right: 10px; background: #5e5e5e;border: 0px solid #EEE;color: #EEE;padding: 4px 10px;width: fit-content;border-radius: 2px;">
                             Update
                         </div>
@@ -123,10 +127,10 @@ window.globals.apps["users"] = function () {
                     // // Set the site config json to the editor
                     // if (self.ls.getItem("login/state") == "true") window.globals.variables["configeditor"].setValue(JSON.stringify(site, null, "\t"));
                 },
-                on_close: function (ui, popup) {
+                on_close: function () {
                     Mousetrap.bind('command+s', 'ctrl+s');
                 },
-                listeners: function (ui, popup) {
+                listeners: function () {
 
                     Mousetrap.bind(['command+s', 'ctrl+s'], function (e) {
                         e.preventDefault();
@@ -134,6 +138,7 @@ window.globals.apps["users"] = function () {
                         return false;
                     });
 
+                    // Update config on the server
                     $(".update-config-button").off("click").click(function () {
 
                         try {
@@ -163,22 +168,115 @@ window.globals.apps["users"] = function () {
 
                         }
                     });
-                }
+
+                    // Show update GUI
+                    $(".update-config-gui-button").off("click").click(function () {
+
+                        try {
+                            var parseddata = JSON.parse(window.globals.variables["configeditor"].getValue());
+
+                            popup().open({
+                                "css": {
+                                    "body": {
+                                        "background-color": "transparent"
+                                    },
+                                },
+                                html: multiline(function () {/*
+                                    <div class="member-login-form-div">
+                                        <div class="form-parent"> 
+                        
+                                            <!-- Email input -->
+                                            <div class="col-12 panel light">
+                                                <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">User's full name</p> 
+                                                <p style="font-size: 13px;color: #444;margin-bottom: 0;">Please enter the full name of the user.</p> 
+                                                <input placeholder="albert.gator@ufl.edu" type="email" class="ui-input-dark member-login-email" style=""/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                */}),
+                                title: "Site configuration",
+                                subtitle: "Use the following form for editing the configuration for the selected site.",
+                                theme: "light",
+                                "actionbuttons": [
+                                    multiline(function () {/* 
+                                        <button class="green member-login-verify-button">Update</button>
+                                    */}),
+                                    multiline(function () {/* 
+                                        <button class="grey modal-close-button">Cancel</button>
+                                    */}),
+                                ],
+                                on_load: function (args) {
+                                    var ui = args.ui;
+                                    ui.popup.find(".body").removeClass("shadow");
+
+                                    console.log(configschema);
+                                    var parentobject;
+                                    iterateoverproperties({...configschema.properties});
+
+                                    function iterateoverproperties (object, parentproperty) {
+                                        for (var property in object) {
+                                            var type = object[property].type;
+    
+                                            // console.log(property + ": " + type);
+
+                                            
+                                            if (type == "object") iterateoverproperties(object[property].properties, property);
+                                            if (type == "string") {
+                                                ui.body.find(".form-parent").append(multiline(function () {/* 
+                                                    <div class="col-12 panel light">
+                                                        <p style="font-size: 14px;color: #d32a2a;margin-bottom: 0;">{{parent}} {{title}}</p> 
+                                                        <input placeholder="text input" type="text" class="ui-input-dark {{class-name}}"/>
+                                                    </div>
+                                                */}, {
+                                                    "parent": parentproperty || "",
+                                                    "title": object[property].name || property,
+                                                    "class-name": "x"
+                                                }))
+                                            }
+                                        }
+                                    }
+                                },
+                                listeners: function (args) {
+                                    var ui = args.ui;
+                    
+                                    ui.body.find(".member-login-form-div .member-login-password").off("keyup").keyup(self.f.debounce(function () {
+                                        if (ui.body.find(".member-login-form-div .member-login-password").val().trim().length == 0) {
+                                            ui.body.find(".member-login-form-div .member-login-verify-button").addClass("ui-disabled");
+                                        }
+                                        else {
+                                            ui.body.find(".member-login-form-div .member-login-verify-button").removeClass("ui-disabled");
+                                        }
+                                    }, 300));
+                                }
+                            });
+                        }
+                        catch (e) {
+                            self.f.create_notification("error", "There was an error parsing the data.", "mint");
+                            console.log(e);
+                        }
+                    });
+                } 
             });
         });
 
         $(".settings-menu-row .logout-button").off("click").click(function () {
 
             if (self.ls.getItem("login/state") == "true") {
-                self.ls.removeItem("login/state");
-                self.ls.removeItem("login/email");
-                self.ls.removeItem("login/timestamp");
+                self.f.create_popup(
+                    "Are you sure you want to logout?<br>You will need to log in again to access the dashboard."
+                , true, function () {
 
-                self.get_login_state();
+                    self.ls.removeItem("login/state");
+                    self.ls.removeItem("login/email");
+                    self.ls.removeItem("login/timestamp");
 
-                $(this).find(".text").text("Login");
-                $(".requires-login").addClass("hidden");
-                $(".project-device-selector-button .selected-device-name").text("No device selected");
+                    self.get_login_state();
+
+                    $(this).find(".text").text("Login");
+                    $(".requires-login").addClass("hidden");
+                    $(".project-device-selector-button .selected-device-name").text("No device selected");
+
+                }, function () {});
             }
             else {
                 self.open_login_dialog();
@@ -856,7 +954,7 @@ window.globals.apps["users"] = function () {
                                             {
                                                 "id": "NAME",
                                                 "name": "Name",
-                                                "width": "160px",
+                                                "width": "140px",
                                                 "title": true,
                                             },
                                             {
@@ -865,9 +963,9 @@ window.globals.apps["users"] = function () {
                                                 "width": "60px"
                                             },
                                             {
-                                                "id": "UUID",
-                                                "name": "UUID",
-                                                "width": "130px",
+                                                "id": "EMAIL",
+                                                "name": "Email",
+                                                "width": "150px",
                                                 "title": true
                                             }                        
                                         ],
@@ -903,34 +1001,6 @@ window.globals.apps["users"] = function () {
                                                         return;
                                                     }
                         
-                                                    return;
-
-                                                    var event = self.f.b64_to_json($(that).parent().attr("data-b64"));
-                        
-                                                    if (event.TYPE != "sale") 
-                                                        self.edit_event("delete", event, {
-                                                            }, function (success) {
-                                                                if (success) {
-                                                                    self.parent.get_events_data()
-                                                                        .then(function() {
-                                                                            datatable.update({
-                                                                                "data": window.globals.data.events
-                                                                            });
-                                                                        });
-                                                                }
-                                                            });
-                                                    else  
-                                                        self.edit_sale("delete", event, {
-                                                            }, function (success) {
-                                                                if (success) {
-                                                                    self.parent.get_events_data()
-                                                                        .then(function() {
-                                                                            datatable.update({
-                                                                                "data": window.globals.data.events
-                                                                            });
-                                                                        });
-                                                                }
-                                                            });
                                                 }, function () {});
                                             }
                                         }
@@ -1216,5 +1286,267 @@ window.globals.apps["users"] = function () {
                     "message": "All tasks completed.",
                 });
             });
+    }
+}
+
+var configschema = {
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "SiteConfigurationSchema",
+    "type": "object",
+    "properties": {
+        "SITE-ID": {
+            "type": "string"
+        },
+        "SITE-METADATA": {
+            "type": "object",
+            "properties": {
+                "LOCATION-NAME": {
+                    "type": "string",
+                    "name": "Location name"
+                },
+                "INSTALLED-ON": {
+                    "type": "string",
+                    "format": "date",
+                    "name": "Installation timestamp"
+                },
+                "ADDRESS": {
+                    "type": "object",
+                    "properties": {
+                        "LOCATION": {
+                            "type": "string",
+                            "name": "Address"
+                        },
+                        "COORDINATES": {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "number"
+                                }
+                            ]
+                        }
+                    },
+                    "required": [
+                        "LOCATION"
+                    ]
+                }
+            },
+            "required": [
+                "LOCATION-NAME",
+                "INSTALLED-ON",
+                "ADDRESS"
+            ]
+        },
+        "ACTIVE": {
+            "type": "boolean"
+        },
+        "VARIABLES": {
+            "type": "object",
+            "properties": {
+                "MM-TO-INCH-FACTOR": {
+                    "type": "number"
+                },
+                "STATION-ID": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "MM-TO-INCH-FACTOR",
+                "STATION-ID"
+            ]
+        },
+        "DATA-FIELDS": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/DataField"
+            }
+        },
+        "CONTROL": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/ControlItem"
+            }
+        }
+    },
+    "required": [
+        "SITE-ID",
+        "SITE-METADATA",
+        "ACTIVE",
+        "VARIABLES",
+        "DATA-FIELDS",
+        "CONTROL"
+    ],
+    "definitions": {
+        "DataField": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "string",
+                    "name": "Field ID"
+                },
+                "NAME": {
+                    "type": "string",
+                    "name": "Field name"
+                },
+                "UNITS": {
+                    "type": "string",
+                    "name": "Unit"
+                },
+                "ORDER": {
+                    "type": "integer",
+                    "name": "Order"
+                },
+                "HIGHLIGHT": {
+                    "type": "boolean",
+                    "name": "Highlighted"
+                },
+                "FORMULA": {
+                    "type": "string",
+                    "name": "Formula"
+                },
+                "CHART": {
+                    "$ref": "#/definitions/Chart"
+                },
+                "TABLE": {
+                    "$ref": "#/definitions/Table"
+                },
+                "DESCRIPTION": {
+                    "type": "string",
+                    "name": "Description"
+                },
+                "BRAND": {
+                    "type": "string",
+                    "name": "Manufacturer"
+                },
+                "CALIBRATION": {
+                    "type": "object",
+                    "properties": {
+                        "LAST-CALIBRATED": {
+                            "type": "string",
+                            "format": "date",
+                            "name": "Last calibrated on"
+                        },
+                        "TYPE": {
+                            "type": "string",
+                            "name": "Type"
+                        },
+                        "VALUE": {
+                            "type": "number",
+                            "name": "Value"
+                        },
+                        "DESCRIPTION": {
+                            "type": "string",
+                            "name": "Description"
+                        }
+                    },
+                    "required": [
+                        "REQUIRED",
+                        "LAST-CALIBRATED",
+                        "TYPE",
+                        "VALUE",
+                        "DESCRIPTION"
+                    ]
+                }
+            },
+            "required": [
+                "ID",
+                "NAME",
+                "UNITS",
+                "ORDER",
+                "HIGHLIGHT",
+                "FORMULA",
+                "CHART",
+                "TABLE",
+                "DESCRIPTION",
+                "BRAND",
+                "CALIBRATION"
+            ]
+        },
+        "Chart": {
+            "type": "object",
+            "properties": {
+                "GROUP-NAME": {
+                    "type": "string",
+                    "name": "Group name"
+                },
+                "STATS": {
+                    "type": "object",
+                    "properties": {
+                        "VISIBLE": {
+                            "type": "boolean",
+                            "name": "Visible"
+                        },
+                        "METRICS": {
+                            "type": "array",
+                            "name": "Metrics",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "TYPE": {
+                    "type": "string",
+                    "name": "Type"
+                },
+                "BIN": {
+                    "type": "integer",
+                    "name": "Bin"
+                },
+                "GAPSIZE": {
+                    "type": "integer",
+                    "name": "Gap size"
+                }
+            },
+            "required": [
+                "GROUP-NAME",
+                "TYPE"
+            ]
+        },
+        "Table": {
+            "type": "object",
+            "properties": {
+                "GROUP-NAME": {
+                    "type": "string"
+                },
+                "PRECISION": {
+                    "type": "integer"
+                }
+            },
+            "required": [
+                "GROUP-NAME",
+                "PRECISION"
+            ]
+        },
+        "ControlItem": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "format": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "key",
+                "name",
+                "unit",
+                "type",
+                "format",
+                "description"
+            ]
+        }
     }
 }

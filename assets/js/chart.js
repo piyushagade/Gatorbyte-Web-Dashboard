@@ -768,7 +768,7 @@ window.globals.apps["charts"] = function () {
                         point: {
                             events: {
                                 click: function (e) {
-                                    console.log(this.x + ", " + moment(parseInt(this.x)).format("LLLL") + ', ' + this.y);
+                                    console.log(this.x / 1000 + ", " + moment(parseInt(this.x)).format("LLL") + ', ' + this.y.toFixed(2));
                                     self.addSynchronizedPlotLine(this.x);
 
                                     var xval = this.x;
@@ -978,6 +978,7 @@ window.globals.apps["charts"] = function () {
             data.forEach(function (d) {
 
                 let timestamp = (parseInt(d.TIMESTAMP) - parseInt(window.globals.variables["tz-offset"]) * 0) * 1000;
+                let received_at = parseInt(d.RECEIVED) * 1000;
 
                 if (window.globals.data["data-fields-readings-formatted"][chart_name]) {
                     window.globals.data["data-fields-readings-formatted"][chart_name].push([timestamp, parseFloat(d[chart_name])]);
@@ -1020,15 +1021,26 @@ window.globals.apps["charts"] = function () {
                     }
                 }
 
+                var rtcerror = false;
+                if (Math.abs((received_at || (timestamp / 1000))) > 60) {
+                    rtcerror = true;
+                    console.warn("On-board RTC may be out-of-sync by " + ((received_at || (timestamp / 1000))) + " seconds.");
+                }
+
                 // Set the data summary field with the latest data
                 $(".data-summary-fields-list .data-summary-field[data-series-id='" + chart_name + "']").find(".value").html(!isNaN(formattedvalue) ? formattedvalue : "-");
-                $(".data-summary-fields-list .last-update-timestamp").attr("title", moment(row.TIMESTAMP * 1000).format("LLL")).html(multiline (function () {/* 
+                $(".data-summary-fields-list .last-update-timestamp").html(multiline (function () {/* 
                     <div class="status-circle {{colorclass}}"></div>
-                    <div>{{timestamp}}</div>
+                    <div class="timestamp-text">{{timestamp}}</div>
                 */}, {
-                    "timestamp": moment(row.TIMESTAMP * 1000).fromNow(),
-                    "colorclass": moment.now() - row.TIMESTAMP * 1000 < 2 * 3600 * 1000 ? "active" : (moment.now() - row.TIMESTAMP * 1000 < 12 * 3600 * 1000 ? "warning" : "error")
+                    "timestamp": moment((received_at || timestamp) * 1000).format("LLL") + (rtcerror ? "; <div class='status-circle warning'></div> RTC may be out-of-sync." : ""),
+                    "colorclass": moment.now() - (received_at || timestamp) * 1000 < 2 * 3600 * 1000 ? "active" : (moment.now() - (received_at || timestamp) < 12 * 3600 * 1000 ? "warning" : "error")
                 }));
+                $(".data-summary-fields-list .last-update-timestamp").find(".timestamp-text").off("mouseover").on("mouseover", function (e) {
+                    $(this).html(moment((received_at || timestamp) * 1000).fromNow() + (rtcerror ? "; <div class='status-circle warning'></div> RTC may be out-of-sync." : ""));
+                }).off("mouseleave").on("mouseleave", function (e) {
+                    $(this).html(moment((received_at || timestamp) * 1000).format("LLL") + (rtcerror ? "; <div class='status-circle warning'></div> RTC may be out-of-sync." : ""));
+                });
             });
         }
     }

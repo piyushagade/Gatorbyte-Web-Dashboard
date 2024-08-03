@@ -123,7 +123,7 @@ window.globals.apps["sites"] = function () {
                 $(".settings-menu-row").find(".users-menu-button").removeClass("hidden");
                 $(".settings-menu-row").find(".add-project-button").removeClass("hidden");
                 $(".settings-menu-row").find(".manage-projects-button").removeClass("hidden");
-                $(".settings-menu-row").find(".add-device-button").removeClass("hidden");
+                $(".settings-menu-row").find(".configuration-menu-item").removeClass("hidden");
             }
             else {
                 console.log("The user is NOT an admin/super for the project.");
@@ -131,7 +131,7 @@ window.globals.apps["sites"] = function () {
                 $(".settings-menu-row").find(".users-menu-button").addClass("hidden").off("click");
                 $(".settings-menu-row").find(".add-project-button").addClass("hidden").off("click");
                 $(".settings-menu-row").find(".manage-projects-button").addClass("hidden").off("click");
-                $(".settings-menu-row").find(".add-device-button").addClass("hidden").off("click");
+                $(".settings-menu-row").find(".configuration-menu-item").addClass("hidden").off("click");
             }
 
             // If the user is an administrator for the device
@@ -153,7 +153,7 @@ window.globals.apps["sites"] = function () {
                 $(".notes-row-heading").removeClass("hidden");
                 $(".notes-row").removeClass("hidden");
 
-                $(".settings-menu-row").find(".show-hide-config-button").removeClass("hidden");
+                $(".settings-menu-row").find(".configuration-menu-item").removeClass("hidden");
 
                 window.globals.accessors["control"].get_control_variables();
                 window.globals.accessors["state"].get_state_data();
@@ -175,7 +175,7 @@ window.globals.apps["sites"] = function () {
                 $(".notes-row-heading").removeClass("hidden");
                 $(".notes-row").removeClass("hidden");
 
-                $(".settings-menu-row").find(".show-hide-config-button").addClass("hidden").off("click");
+                $(".settings-menu-row").find(".configuration-menu-item").addClass("hidden").off("click");
             }
 
             // Set global sensors data
@@ -207,20 +207,47 @@ window.globals.apps["sites"] = function () {
                     // Set global data variable
                     window.globals.data["data-fields-readings"] = data.payload;
 
-                    // Try getting reference data
+                    // Try annotation data
                     $.ajax({
-                        type: 'GET',
-                        url: self.f.url({ path: "/data/reference/get" }),
-                        success: function(referencedata) {
+                        type: 'POST',
+                        data: JSON.stringify({
+                            "device-sn": self.ls.getItem("state/device/sn"),
+                            "device-id": self.ls.getItem("state/device/id"),
+                            "project-id": self.ls.getItem("state/project/id"),
+                            "timestamp": moment.now(),
+                        }),
+                        url: self.f.url({ path: "/data/annotations/get" }),
+                        success: function(annotationdata) {
 
-                            // Set reference data
-                            window.globals.data["data-fields-readings-reference"] = referencedata;
+                            window.globals.data["data-annotations"] = annotationdata.payload;
                             
-                            // Call callback if available
-                            if (callback && typeof callback == "function") callback();
+                            // Try getting reference data
+                            $.ajax({
+                                type: 'GET',
+                                url: self.f.url({ path: "/data/reference/get" }),
+                                success: function(referencedata) {
 
-                            // Hide loader
-                            $(".loader-parent").addClass("hidden");
+                                    // Set reference data
+                                    window.globals.data["data-fields-readings-reference"] = referencedata;
+                                    
+                                    // Call callback if available
+                                    if (callback && typeof callback == "function") callback();
+
+                                    // Hide loader
+                                    $(".loader-parent").addClass("hidden");
+                
+                                },
+                                error: function (request, textStatus, errorThrown) {
+
+                                    console.log("Reference data: " + false);
+
+                                    // Call callback if available
+                                    if (callback && typeof callback == "function") callback();
+
+                                    // Hide loader
+                                    $(".loader-parent").addClass("hidden");
+                                }
+                            });
         
                         },
                         error: function (request, textStatus, errorThrown) {
@@ -253,6 +280,38 @@ window.globals.apps["sites"] = function () {
           
             return uniqueID;
         }
+
+
+        // Force order on server
+        $(".force-order-button").click(function () {
+            self.f.create_popup(
+                "Are you sure you want to attempt fixing the order in the data?"
+            , true, function () {
+
+                $.ajax({
+                    type: 'POST',
+                    data: JSON.stringify({
+                        "device-sn": self.ls.getItem("state/device/sn"),
+                        "device-id": self.ls.getItem("state/device/id"),
+                        "project-id": self.ls.getItem("state/project/id"),
+                        "timestamp": moment.now(),
+                    }),
+                    url: self.f.url({ path: "/data/forceorder" }),
+                    success: function(response) {
+                        console.log(response);
+
+                        if (response.status == "success") {
+                            self.f.create_notification("success", "Action complete. Please refresh the page.", "mint");
+                        }
+                        else {
+                            self.f.create_notification("error", "Please try again in some time.", "mint");
+                        }
+                    },
+                    error: function (request, textStatus, errorThrown) { }
+                });
+
+            }, function () {});
+        });
         
 
         // Add a project button listener

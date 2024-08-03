@@ -172,11 +172,12 @@ window.globals.apps["projects"] = function () {
                                     //  Recreate chart
                                     let chart = $("#chart-container").highcharts();
                                     while(chart && chart.series.length > 0) chart.series[0].remove(true);
-        
+
                                     // Get site config data
                                     window.globals.accessors["sites"].get_site_config_data(deviceid, function() {
                                         var devicedata = window.globals.data["device"];
-        
+                                        console.log(devicedata);
+
                                         // $(".sites-list").addClass("hidden");
                                         // $(".sites-info").removeClass("hidden");
                                         // $(".sites-info .site-name").text(sitename);
@@ -184,7 +185,6 @@ window.globals.apps["projects"] = function () {
                                         // $(".sites-info .site-address").text(sitedata["ADDRESS"]["LOCATION"]);
                                         // $(".sites-info .site-installed-on-date").text(sitedata["INSTALLED-ON"]);
                                     })
-        
                                 });
             
                             });
